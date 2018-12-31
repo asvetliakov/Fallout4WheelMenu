@@ -1,0 +1,14 @@
+{
+    "modName": "WheelMenu",
+    "keybinds": [
+        {
+            "id": "wheelMenuHotkey",
+            "desc": "Open Wheel Menu",
+            "action": {
+                "type": "CallFunction",
+                "form": "WheelMenu.esp|5F99",
+                "function": "ToggleMenu"
+            }
+        }
+    ]
+}

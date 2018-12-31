@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		// "output": "C:\\Games\\ModOrganizer\\mods\\Wheel Menu\\Interface\\WheelMenu.swf",
+		"output": "bin/WheelMenu.swf",
+		"use-network": false,
+		"static-link-runtime-shared-libraries": true
+	},
+	"files": [
+		"src/Main.as",
+	]
+}

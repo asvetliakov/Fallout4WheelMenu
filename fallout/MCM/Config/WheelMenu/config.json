@@ -1,0 +1,17 @@
+{
+  "modName": "WheelMenu",
+  "displayName": "Wheel Menu",
+  "minMcmVersion": 2,
+  "content": [
+      {
+          "type": "spacer",
+          "numLines": 1
+      },
+      {
+          "id": "wheelMenuHotkey",
+          "text": "Toggle Key",
+          "type": "hotkey",
+          "help": "Hotkey to open/close menu"
+      }
+  ]
+}
