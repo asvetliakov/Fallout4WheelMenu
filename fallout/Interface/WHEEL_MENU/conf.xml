@@ -27,26 +27,44 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
 <wheelmenu>
     <menu icon="b_aid_med" name="Aid" type="left">
         <pattern kind="tag" value="Aid" />
+        <pattern kind="tag" value="Device" />
     </menu>
     <menu icon="b_alc_bottle" name="Chems" type="left">
+        <pattern kind="tag" value="Blunt" />
+        <pattern kind="tag" value="Joint" />
+        <pattern kind="tag" value="Hash" />
         <pattern kind="tag" value="Chem" />
+        <pattern kind="tag" value="Cigar" />
+        <pattern kind="tag" value="Cigarette" />
     </menu>
     <menu icon="b_aid_food_1" name="Food" type="left" closeOnUse="false">
         <pattern kind="tag" value="Food" />
         <pattern kind="tag" value="Rad Food" />
         <pattern kind="tag" value="Produce" />
-        <pattern kind="regex" value="Custom Name" />
     </menu>
     <menu icon="b_aid_alcohol" name="Drinks" type="left">
+        <pattern kind="tag" value="Drink" />
         <pattern kind="tag" value="Liquor" />
+        <pattern kind="tag" value="Nuka" />
+        <pattern kind="tag" value="Coffee" />
+        <pattern kind="tag" value="Tea" />
+        <pattern kind="tag" value="Beer" />
+        <pattern kind="tag" value="Canteen" />
     </menu>
     <menu icon="w_grenade" name="Grenades" type="right">
         <pattern kind="tag" value="Grenade" />
         <pattern kind="tag" value="Molotov" />
+        <pattern kind="tag" value="Nuke Grenade" />
+        <pattern kind="tag" value="Pulse Grenade" />
+        <pattern kind="tag" value="Stun Grenade" />
+        <pattern kind="tag" value="Flash Grenade" />
+        <pattern kind="tag" value="Holy Grenade" />
     </menu>
     <menu icon="w_landmine" name="Mines" type="right">
         <pattern kind="tag" value="Mine" />
-        <pattern kind="tag" value="Signal" />
+        <pattern kind="tag" value="Trap" />
+        <pattern kind="tag" value="Explosives" />
+        <pattern kind="tag" value="Dynamite" />
     </menu>
     <menu icon="w_combat_knife" name="Throwables" type="right">
         <pattern kind="category" value="Explosives" noTaggedOnly="true" />
