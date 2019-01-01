@@ -1,45 +1,53 @@
 ﻿<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
   <moduleName>This is the name of your mod</moduleName>
-    <installStep name="Custom">
-      <optionalFileGroups order="Explicit">
-        <group name="Configuration preset" type="SelectExactlyOne">
-          <plugins order="Explicit">
+	<requiredInstallFiles>
+		<file source="WheelMenu.esp" />
+		<file source="Interface/WheelMenu.swf" />
+		<file source="MCM/Config/WheelMenu/config.json" />
+		<file source="MCM/Config/WheelMenu/keybinds.json" />
+		<file source="Scripts/WheelMenuWidget.pex" />
+	</requiredInstallFiles>
+	<installSteps order="Explicit">
+		<installStep name="Custom">
+			<optionalFileGroups order="Explicit">
+				<group name="Configuration preset" type="SelectExactlyOne">
+					<plugins order="Explicit">
 						<plugin name="Vanilla">
-              <description>
-                Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted.
-              </description>
-              <files>
+							<description>
+								Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted.
+							</description>
+							<files>
 								<file source="presets/vanilla.xml" destination="Interface/WHEEL_MENU/conf.xml" />
-              </files>
-              <typeDescriptor>
-                <type name="Optional"/>
-              </typeDescriptor>
-            </plugin>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
 						<plugin name="VIS-G Item Sorting">
-              <description>
-                Select if you're using VIS-G Item Sorting mod
-              </description>
-              <files>
+							<description>
+								Select if you're using VIS-G Item Sorting mod
+							</description>
+							<files>
 								<file source="presets/visg.xml" destination="Interface/WHEEL_MENU/conf.xml" />
-              </files>
-              <typeDescriptor>
-                <type name="Optional"/>
-              </typeDescriptor>
-            </plugin>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
 						<plugin name="Valdacil's Item Sorting">
-              <description>
-                Select if you're using Valdacil's Item Sorting modk
-              </description>
-              <files>
+							<description>
+								Select if you're using Valdacil's Item Sorting modk
+							</description>
+							<files>
 								<file source="presets/visg.xml" destination="Interface/WHEEL_MENU/conf.xml" />
-              </files>
-              <typeDescriptor>
-                <type name="Optional"/>
-              </typeDescriptor>
-            </plugin>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
 					</plugins>
 				</group>
 			</optionalFileGroups>
-    </installStep>
-  </installSteps>
+		</installStep>
+	</installSteps>
 </config>
