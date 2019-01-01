@@ -52,13 +52,13 @@ package {
 		 */
 		private var menuContainer: MenuContainer;
 		/**
-		 * Menu items
+		 * Menu items. Need to be array to preserve order
 		 */
 		private var menuItems: Array = [];
 		/**
 		 * Collection of items mapped to approtiative category. Key is the menu item name
 		 */
-		private var inventoryItemsMap: Object;
+		private var inventoryItemsMap: Object = {};
 		/**
 		 * Current list handle. Null if not selected
 		 */
@@ -76,30 +76,30 @@ package {
 		 */
 		private var defUIConf: XML;
 		/**
-		 * Center position of the stage
+		 * Offset position point from the center of the screen
 		 */
-		private var centerPos: Point;
-		/**
-		 * X offset from the center
-		 */
-		private var _offsetX: int;
-		/**
-		 * Y offset from the center
-		 */
-		private var _offsetY: int;
+		private var _offsetPoint: Point;
 
 		private var _equippedItem: int;
+		/**
+		 * Stage scaling factor
+		 */
+		private var _scaling: Number;
 
 		public function Main() {
 			trace("WheelMenu: Constructor");
+			this._offsetPoint = new Point(0, 0);
+
+			this._scaling = 1;
+			// Note: need to set them early
+			this.scaleX = this._scaling;
+			this.scaleY = this._scaling;
 			try {
 				Font.registerFont(this.font);
 			} catch (e: Error) {
 				trace("WheelMenu: Registering font failed, e: " + e.message);
 			}
-			// note: stage.scaleMode doesn't do anything
 			this.stage.addChild(this);
-			// stage.scaleMode = StageScaleMode.SHOW_ALL;
 			this.inventoryItemsMap = {};
 			this.list = null;
 			var confLoader: URLLoader = new URLLoader();
@@ -149,30 +149,10 @@ package {
 			this.redrawCurrentList();
 		}
 
-		public function get offsetX(): int {
-			return this._offsetX;
-		}
-
-		public function get offsetY(): int {
-			return this._offsetY;
-		}
-
-		/**
-		 * Called from papyrus
-		 */
-		public function set offsetX(v: int): void {
-			this.offsetX = v;
-			this.centerPos.x += v;
-			this.redrawMenu();
-			this.redrawCurrentList();
-		}
-
-		/**
-		 * Called from papyrus
-		 */
-		public function set offsetY(v: int): void {
-			this.offsetY = v;
-			this.centerPos.y += v;
+		public function set scaling(val: Number): void {
+			this._scaling = val;
+			this.scaleX = val;
+			this.scaleY = val;
 			this.redrawMenu();
 			this.redrawCurrentList();
 		}
@@ -200,6 +180,16 @@ package {
 			}
 		}
 
+		/**
+		 * Return center position of the screen including offset
+		 */
+		private function get centerPos(): Point {
+			return new Point(
+				(this.stage.stageWidth / this._scaling / 2) + this._offsetPoint.x,
+				(this.stage.stageHeight / this._scaling / 2) + this._offsetPoint.y
+			);
+		}
+
 		private function onConfLoaded(event: Event): void {
 			trace("WheelMenu: Configuration loaded");
 			this.conf = new XML(event.currentTarget.data);
@@ -208,6 +198,7 @@ package {
 					name: menu.@name[0].toString(),
 					type: menu.@type[0].toString(),
 					icon: menu.@icon[0].toString(),
+					close: menu.@closeOnUse[0] && menu.@closeOnUse[0].toString() === "false" ? false : true,
 					patterns: []
 				};
 				for each (var pattern: XML in menu.children()) {
@@ -239,8 +230,6 @@ package {
 		 */
 		private function onIconsLoaded(event: Event): void {
 			trace("WheelMenu: DEF UI Icons loaded");
-			this.centerPos = new Point(stage.stageWidth / 2, stage.stageHeight / 2)
-			// this.stage.scaleMode = StageScaleMode.SHOW_ALL;
 			this.iconManager = new IconManager(event.target.applicationDomain);
 			this.menuContainer = new MenuContainer(
 				this.centerPos,
@@ -251,6 +240,8 @@ package {
 			);
 			this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
 			this.addChild(this.menuContainer);
+			// NOTE: DO NOT Set stage scale mode
+			// this.stage.scaleMode = StageScaleMode.SHOW_ALL;
 			trace("WheelMenu: Menu constructed");
 
 			try {
@@ -300,16 +291,17 @@ package {
 
 		private function showList(type: String, name: String): void {
 			var items: Array = this.inventoryItemsMap[name] || [];
+			var menuItem: Object = this.findMenuItemByName(name) || {};
 			if (type === "left") {
 				var leftListPosX: Number = this.centerPos.x - this.menuOuterRadius - this.listMargin - this.listWidth;
 				var leftListPosY: Number = this.centerPos.y - (this.listHeight / 2);
-				this.list = new ListContainer(name, "left", new Point(leftListPosX, leftListPosY), this.listWidth, this.listHeight, this.iconManager, items);
+				this.list = new ListContainer(name, "left", new Point(leftListPosX, leftListPosY), this.listWidth, this.listHeight, this.iconManager, items, menuItem["close"]);
 				this.list.addEventListener(ListContainer.ITEM_SELECTED, this.onItemSelect);
 				this.addChild(this.list);
 			} else {
 				var rightListPosX: Number = this.centerPos.x + this.menuOuterRadius + this.listMargin;
 				var rightListPosY: Number = this.centerPos.y - (this.listHeight / 2);
-				this.list = new ListContainer(name, "right", new Point(rightListPosX, rightListPosY), this.listWidth, this.listHeight, this.iconManager, items);
+				this.list = new ListContainer(name, "right", new Point(rightListPosX, rightListPosY), this.listWidth, this.listHeight, this.iconManager, items, menuItem["close"]);
 				this.list.addEventListener(ListContainer.ITEM_SELECTED, this.onItemSelect);
 				this.addChild(this.list);
 			}
@@ -317,14 +309,23 @@ package {
 
 		private function onItemSelect(ev: CustomEvent): void {
 			var item: Item = ev.customData.item;
+			var close: Boolean = ev.customData.close;
 			if (item) {
-				trace("WheelMenu: Selected item: " + item.id);
+				trace("WheelMenu: Selected item: " + item.id + ", close: " + close);
 				if (this.f4seCodeObj) {
 					try {
-						this.f4seCodeObj.SendExternalEvent(Main.SELECT_EVENT_NAME, item.id);
+						this.f4seCodeObj.SendExternalEvent(Main.SELECT_EVENT_NAME, item.id, close);
 					} catch (error: Error) {
 						trace("WheelMenu: Unable to send f4se external event: " + error.message);
 					}
+				}
+				// if not closing need to decrement count of item/remove if last and redrawList
+				if (!close) {
+					item.count -= 1;
+					if (item.count <= 0) {
+						this.filterItemFromInventories(item);
+					}
+					this.redrawCurrentList();
 				}
 			}
 		}
@@ -372,6 +373,15 @@ package {
 			return inventoryNames;
 		}
 
+		private function filterItemFromInventories(item: Item): void {
+			var inventoryNames: Array = this.getItemInventoryNames(item);
+			for each (var name: String in inventoryNames) {
+				this.inventoryItemsMap[name] = this.inventoryItemsMap[name].filter(function (i: Item, index: int, arr: Array): Boolean {
+					return i !== item;
+				})
+			}
+		}
+
 		private function findItemById(id: int): Item {
 			var item: Item;
 			for each (var inventoryItems: Array in this.inventoryItemsMap) {
@@ -387,6 +397,15 @@ package {
 				}
 			}
 			return item;
+		}
+
+		private function findMenuItemByName(name: String): Object {
+			for each (var item: Object in this.menuItems) {
+				if (item.name === name) {
+					return item;
+				}
+			}
+			return null;
 		}
 	}
 }

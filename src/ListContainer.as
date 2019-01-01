@@ -12,7 +12,19 @@ package {
 
         private var iconManager: IconManager;
 
-        public function ListContainer(category: String, type: String, leftPos: Point, width: Number, height: Number, iconManager: IconManager, items: Array) {
+        private var closeOnUse: Boolean;
+
+        public function ListContainer(
+            category: String,
+            type: String,
+            leftPos: Point,
+            width: Number,
+            height: Number,
+            iconManager: IconManager,
+            items: Array,
+            closeOnUse: Boolean = true
+        ) {
+            this.closeOnUse = closeOnUse;
             this.type = type;
             this.categoryName = category;
             this.iconManager = iconManager;
@@ -44,7 +56,7 @@ package {
         private function onItemClick(ev: CustomEvent): void {
             var item: Item = ev.customData.item;
             if (!item.equipped) {
-                var selEv: CustomEvent = new CustomEvent(ListContainer.ITEM_SELECTED, { item: item });
+                var selEv: CustomEvent = new CustomEvent(ListContainer.ITEM_SELECTED, { item: item, close: this.closeOnUse });
                 this.dispatchEvent(selEv);
             }
         }

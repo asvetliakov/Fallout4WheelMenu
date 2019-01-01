@@ -241,15 +241,15 @@ Function onMenuInit()
 EndFunction
 
 ;; Selected item
-Function onMenuSelect(int id)
-    Debug.Trace("WheelMenu: Selected id: " + id)
+Function onMenuSelect(int id, bool close)
+    Debug.Trace("WheelMenu: Selected id: " + id + ", close: " + close)
     Actor player = Game.GetPlayer()
     Form item = Game.GetForm(id)
     If (item)
         Debug.Trace("WheelMenu: Equipping item: " + item.GetFormID())
         player.EquipItem(item, false, true)
     EndIf
-    If (Ui.IsMenuOpen(WheelMenuName))
+    If (Ui.IsMenuOpen(WheelMenuName) && close)
         player.DispelSpell(SlowTimeSpell)
         UI.CloseMenu(WheelMenuName)
     Endif
