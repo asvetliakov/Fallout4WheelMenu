@@ -193,8 +193,9 @@ EndFunction
 Function RegisterMenu()
     If (!UI.IsMenuRegistered(WheelMenuName))
         UI:MenuData data = new UI:MenuData
-        ; data.MenuFlags = ShowCursor|DoNotPreventGameSave|EnableMenuControl
-        data.MenuFlags = 2060
+        ; data.MenuFlags = ShowCursor|EnableMenuControl = 12
+        ; data.MenuFlags = ShowCursor|DoNotPreventGameSave|EnableMenuControl = 2060
+        data.MenuFlags = 12
         UI.RegisterCustomMenu(WheelMenuName, "WheelMenu", "root1", data)
     EndIf
 EndFunction
