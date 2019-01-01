@@ -6,7 +6,7 @@
             "desc": "Open Wheel Menu",
             "action": {
                 "type": "CallFunction",
-                "form": "WheelMenu.esp|5F99",
+                "form": "WheelMenu.esp|F99",
                 "function": "ToggleMenu"
             }
         }
