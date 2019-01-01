@@ -118,7 +118,7 @@ package {
             }
             // render text
             this.text = new TextField();
-            this.text.defaultTextFormat = new TextFormat("$MAIN_Font");
+            this.text.defaultTextFormat = new TextFormat("$MAIN_Font", 14);
             // this.text.embedFonts = true;
             // this.text.autoSize = TextFieldAutoSize.LEFT;
             this.text.text = this.item.name;
