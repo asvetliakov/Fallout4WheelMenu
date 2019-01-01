@@ -14,7 +14,7 @@
 					<plugins order="Explicit">
 						<plugin name="Vanilla">
 							<description>
-								Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted.
+								Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted. I strongly recommend to use wheel menu with sorting mod.
 							</description>
 							<files>
 								<file source="presets/vanilla.xml" destination="Interface/WHEEL_MENU/conf.xml" />
@@ -39,7 +39,7 @@
 								Select if you're using Valdacil's Item Sorting modk
 							</description>
 							<files>
-								<file source="presets/visg.xml" destination="Interface/WHEEL_MENU/conf.xml" />
+								<file source="presets/valdacil.xml" destination="Interface/WHEEL_MENU/conf.xml" />
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>

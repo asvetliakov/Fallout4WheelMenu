@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		// "output": "C:\\Games\\ModOrganizer\\mods\\WheelMenu\\Interface\\WheelMenu.swf",
+		// "output": "C:\\Games\\ModOrganizer\\mods\\Fallout 4 Wheel Menu\\Interface\\WheelMenu.swf",
 		"output": "bin/WheelMenu.swf",
 		"use-network": false,
 		"static-link-runtime-shared-libraries": true

@@ -91,6 +91,7 @@ Function InitInventoryItems(Actor player)
             ; Only once when initialization, later we'll track them though onItemAdded/Removed/Equipped
             invItem.Count = player.GetItemCount(item)
             invItem.Equipped = false
+            invItem.Category = GetItemCategory(item)
 
             If (item is Weapon)
                 weaponInventoryItems.Add(invItem)
