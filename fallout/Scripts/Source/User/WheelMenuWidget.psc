@@ -11,11 +11,17 @@ Keyword Property GrenadeThrownKeyword Auto
 Keyword Property Melee1HKeyword Auto
 Keyword Property Melee2HKeyword Auto
 Keyword Property NukaKeyword Auto
-Int Property SlowTimeMode Auto
 Spell Property SlowTimeSpell Auto
+Spell Property SlowTimeSpellLight Auto
+Spell Property SlowTimeSpellMedium Auto
 Keyword Property StimpackKeyword Auto
 Keyword Property WaterKeyword Auto
 
+int Property SlowTimeMode = 0 Auto
+int Property SlowTimeMagnitude = 0 Auto
+int Property MenuOffsetX = 0 Auto
+int Property MenuOffsetY = 0 Auto
+float Property MenuScaling = 1.0 Auto
 
 String WheelMenuName = "F4WheelMenu" const
 
@@ -26,6 +32,12 @@ Struct Item
     int Count
     bool Equipped
     string Category
+EndStruct
+
+Struct MenuConf
+    int offsetX
+    int offsetY
+    float scaling
 EndStruct
 
 ; Easier and faster to track them separately
@@ -140,18 +152,38 @@ Function AddItem(Form item, int count = 1)
     Endif
 EndFunction
 
+Function ApplySlowTimeMode(int magn, Actor player)
+    If (magn == 0)
+        player.DoCombatSpellApply(SlowTimeSpell, player)
+    Elseif (magn == 1)
+        player.DoCombatSpellApply(SlowTimeSpellMedium, player)
+    Elseif (magn == 2)
+        player.DoCombatSpellApply(SlowTimeSpellLight, player)
+    Endif
+EndFunction
+
+Function DispellSlowTime(Actor player)
+    player.DispelSpell(SlowTimeSpell)
+    player.DispelSpell(SlowTimeSpellMedium)
+    player.DispelSpell(SlowTimeSpellLight)
+EndFunction
+
 Function ToggleMenu()
     Actor player = Game.GetPlayer()
+    ; try to always dispell slow time mode, regardless of status
+    DispellSlowTime(player)
     If (!UI.IsMenuRegistered(WheelMenuName))
         Return
     EndIf
     If (UI.IsMenuOpen(WheelMenuName))
-        player.DispelSpell(SlowTimeSpell)
         UI.CloseMenu(WheelMenuName)
     Else
+        ; int MenuSlowTimeMode = MCM.GetModSettingInt("WheelMenu", "iSlowTimeMode:WheelMenu")
+        ; int MenuSlowTimeMagn = MCM.GetModSettingInt("WheelMenu", "iSlowTimeMagnitude:WheelMenu")
         Debug.Trace("WheelMenu: SlowTimeMode: " + SlowTimeMode)
+        Debug.Trace("WheelMenu: SlowTimeMagnitude: " + SlowTimeMagnitude)
         if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
-            player.DoCombatSpellApply(SlowTimeSpell, player)
+            ApplySlowTimeMode(SlowTimeMagnitude, player)
         EndIf
         UI.OpenMenu(WheelMenuName)
     EndIf
@@ -172,7 +204,7 @@ Function RegisterForCustomEvents(Actor player)
     RegisterForRemoteEvent(player, "onItemRemoved")
     ; Todo: investigate possibility of applying only to specific keywords only
     AddInventoryEventFilter(none)
-    RegisterForKey(71); g
+    ; RegisterForKey(71); g
     RegisterForExternalEvent("WheelMenuInit", "onMenuInit")
     RegisterForExternalEvent("WheelMenuSelect", "onMenuSelect")
 EndFunction
@@ -206,17 +238,28 @@ Event ObjectReference.OnItemRemoved(ObjectReference akSender, Form akBaseItem, i
     RemoveItem(akBaseItem, aiItemCount)
 EndEvent
 
-Event OnKeyDown(int aiKeyCode)
-    If (aiKeyCode == 71)
-        ToggleMenu()
-    Endif
-EndEvent
+; Event OnKeyDown(int aiKeyCode)
+;     If (aiKeyCode == 71)
+;         ToggleMenu()
+;     Endif
+; EndEvent
 
 
 ;; Wheel menu is ready
 Function onMenuInit()
     Debug.Trace("WheelMenu: Menu initialized")
     If (UI.IsMenuOpen(WheelMenuName))
+        ; int menuOffsetX = MCM.GetModSettingInt("WheelMenu", "iMenuOffsetX:WheelMenu")
+        ; int menuOffsetY = MCM.GetModSettingInt("WheelMenu", "iMenuOffsetY:WheelMenu")
+        ; float menuScaling = MCM.GetModSettingFloat("WheelMenu", "fMenuScaling:WheelMenu")
+        Debug.Trace("WheelMenu: Offset x: " + MenuOffsetX + ", Offset Y: " + MenuOffsetY + ", Scaling: " + MenuScaling)
+        MenuConf conf = new MenuConf
+        conf.offsetX = MenuOffsetX
+        conf.offsetY = MenuOffsetY
+        conf.scaling = MenuScaling
+        ; This will display menu
+        UI.Set(WheelMenuName, "root1.menuPos", conf)
+
         UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(ingestibleInventoryItems as Var[]))
         UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(weaponInventoryItems as Var[]))
 
@@ -245,14 +288,18 @@ Function onMenuSelect(int id, bool close)
     Debug.Trace("WheelMenu: Selected id: " + id + ", close: " + close)
     Actor player = Game.GetPlayer()
     Form item = Game.GetForm(id)
-    If (item)
-        Debug.Trace("WheelMenu: Equipping item: " + item.GetFormID())
-        player.EquipItem(item, false, true)
-    EndIf
+    ; Need to dispell slow time first otherwise it's not possible to use slow time chems
+    ; also always dispell regardless of menu opened/closed already
+    If (close)
+        DispellSlowTime(player)
+    Endif
     If (Ui.IsMenuOpen(WheelMenuName) && close)
-        player.DispelSpell(SlowTimeSpell)
         UI.CloseMenu(WheelMenuName)
     Endif
+    If (item)
+        Debug.Trace("WheelMenu: Equipping item: " + id)
+        player.EquipItem(item, false, true)
+    EndIf
 EndFunction
 
 

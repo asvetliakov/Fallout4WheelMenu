@@ -148,16 +148,17 @@ package {
 			this.redrawCurrentList();
 		}
 
-		public function set scaling(val: Number): void {
-			this._scaling = val;
-			this.scaleX = val;
-			this.scaleY = val;
-			this.redrawMenu();
-			this.redrawCurrentList();
-		}
-
 		public function get equippedItemId(): int {
 			return 0;
+		}
+
+		public function set menuPos(val: Object): void {
+			var data: Object = val["__struct__"]["__data__"];
+			this._offsetPoint = new Point(data["offsetX"] || 0, data["offsetY"] || 0);
+			this._scaling = data["scaling"] || 1;
+			this.scaleX = this._scaling;
+			this.scaleY = this._scaling;
+			this.drawMenu();
 		}
 
 		public function set equippedItemId(id: int): void {
@@ -230,18 +231,18 @@ package {
 		private function onIconsLoaded(event: Event): void {
 			trace("WheelMenu: DEF UI Icons loaded");
 			this.iconManager = new IconManager(event.target.applicationDomain);
-			this.menuContainer = new MenuContainer(
-				this.centerPos,
-				this.menuInnerRadius,
-				this.menuOuterRadius,
-				this.iconManager,
-				this.menuItems
-			);
-			this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
-			this.addChild(this.menuContainer);
+			// this.menuContainer = new MenuContainer(
+			// 	this.centerPos,
+			// 	this.menuInnerRadius,
+			// 	this.menuOuterRadius,
+			// 	this.iconManager,
+			// 	this.menuItems
+			// );
+			// this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
+			// this.addChild(this.menuContainer);
 			// NOTE: DO NOT Set stage scale mode
 			// this.stage.scaleMode = StageScaleMode.SHOW_ALL;
-			trace("WheelMenu: Menu constructed");
+			trace("WheelMenu: Menu Loaded");
 
 			try {
 				this.f4seCodeObj.SendExternalEvent(Main.INIT_EVENT_NAME);
@@ -250,19 +251,20 @@ package {
 			}
 		}
 
-		private function redrawMenu(): void {
+		private function drawMenu(): void {
+			trace("WheelMenu: Drawing menu");
 			if (this.menuContainer) {
 				this.removeChild(this.menuContainer);
-				this.menuContainer = new MenuContainer(
-					this.centerPos,
-					this.menuInnerRadius,
-					this.menuOuterRadius,
-					this.iconManager,
-					this.menuItems
-				)
-				this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
-				this.addChild(this.menuContainer);
 			}
+			this.menuContainer = new MenuContainer(
+				this.centerPos,
+				this.menuInnerRadius,
+				this.menuOuterRadius,
+				this.iconManager,
+				this.menuItems
+			)
+			this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
+			this.addChild(this.menuContainer);
 		}
 
 		private function redrawCurrentList(): void {
@@ -406,6 +408,17 @@ package {
 				}
 			}
 			return null;
+		}
+
+		private function updateUIPositions(): void {
+			if (this.menuContainer) {
+				this.menuContainer.x += this._offsetPoint.x;
+				this.menuContainer.y += this._offsetPoint.y;
+			}
+			if (this.list) {
+				this.list.x += this._offsetPoint.x;
+				this.list.y	+= this._offsetPoint.y;
+			}
 		}
 	}
 }
