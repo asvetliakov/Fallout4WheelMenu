@@ -84,13 +84,12 @@ package {
 		/**
 		 * Stage scaling factor
 		 */
-		private var _scaling: Number;
+		private var _scaling: Number = 1;
 
 		public function Main() {
 			trace("WheelMenu: Constructor");
 			this._offsetPoint = new Point(0, 0);
 
-			this._scaling = 1;
 			// Note: need to set them early
 			this.scaleX = this._scaling;
 			this.scaleY = this._scaling;
@@ -99,7 +98,7 @@ package {
 			} catch (e: Error) {
 				trace("WheelMenu: Registering font failed, e: " + e.message);
 			}
-			this.stage.addChild(this);
+			// this.stage.addChild(this);
 			this.inventoryItemsMap = {};
 			this.list = null;
 			var confLoader: URLLoader = new URLLoader();
@@ -261,6 +260,7 @@ package {
 					this.iconManager,
 					this.menuItems
 				)
+				this.menuContainer.addEventListener(MenuContainer.ITEM_SELECTED, this.onMenuSelected);
 				this.addChild(this.menuContainer);
 			}
 		}
