@@ -17,12 +17,14 @@ RangedWeapons - All ranged weapons
 MeleeWeapons - All melee weapons
 Explosives - All grenades/mines/etc
 Food -> All food (ObjectTypeFood keyword)
-Alchohol -> All alchohol (ObjectTypeAlchohol)
+Alcohol -> All alchohol (ObjectTypeAlchohol)
 Drink -> All drinks (ObjectTypeDrink) but not alchohol
 Chems -> All chems (ObjectTypeChem)
 Ingestible -> All ingestibles what don't fall into previous categories (i.e. without proper keyword)
 
 -->
+
+<!-- Note: Icon names are unique for vis-g -->
 
 <wheelmenu>
     <menu icon="b_aid_med" name="Aid" type="left">
@@ -40,6 +42,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
     <menu icon="b_aid_food_1" name="Food" type="left" closeOnUse="false">
         <pattern kind="tag" value="Food" />
         <pattern kind="tag" value="Rad Food" />
+        <pattern kind="tag" value="Prewar" />
         <pattern kind="tag" value="Produce" />
     </menu>
     <menu icon="b_aid_alcohol" name="Drinks" type="left">
@@ -67,6 +70,10 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <pattern kind="tag" value="Dynamite" />
     </menu>
     <menu icon="w_combat_knife" name="Throwables" type="right">
+        <pattern kind="tag" value="Thrown" />
+        <pattern kind="tag" value="Signal" />
+        <pattern kind="tag" value="Beacon" />
+        <!-- For grenade-like without sorting tags -->
         <pattern kind="category" value="Explosives" noTaggedOnly="true" />
     </menu>
 </wheelmenu>

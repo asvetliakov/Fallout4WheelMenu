@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<!--
+Each <menu> entry defines the section in wheel menu. Menus appear in order which they were defined, from top to bottom
+type="left" or type="right" defines left/right sections of wheel to use. They're independent from each other
+"icon" is the icon name to use from DEF_UI iconlibs2.swf WITHOUT first "m_" prefix . Name should be unique for each menu entry
+closeOnUse="true" (or "false") - True will close menu after using the item, false won't. Default to true if not specified
+
+Each menu tag should contain one or more <pattern> tags which defines what items will go to this menu. Possible definitions:
+1) <pattern kind="tag" value="Aid" /> - Match by sorting tag (produced by sorting mods), without any brackets, i.e. will match [Aid] or (Aid) or {Aid} or |Aid|
+2) <pattern kind="regex" value="Some val" /> - Match by custom regex
+3) <pattern kind="category" value="RangedWeapons" onTaggedOnly="true" /> - Match by item category, use it if you don't use any sorting mod
+noTaggedOnly="true" (or "false") -> "true" instructs to include only non tagged items (i.e. without sorting keyword), "false" tells to include all items from this category
+
+Possible categories:
+RangedWeapons - All ranged weapons
+MeleeWeapons - All melee weapons
+Explosives - All grenades/mines/etc
+Food -> All food (ObjectTypeFood keyword)
+Alcohol -> All alcohol (ObjectTypeAlchohol)
+Drink -> All drinks (ObjectTypeDrink) but not alchohol
+Chems -> All chems (ObjectTypeChem)
+Ingestible -> All ingestibles what don't fall into previous categories (i.e. without proper keyword)
+
+-->
+
+<wheelmenu>
+    <menu icon="chem" name="Chems" type="left">
+        <pattern kind="category" value="chems" />
+    </menu>
+    <menu icon="food" name="Food" type="left" closeOnUse="false">
+        <pattern kind="category" value="Food" />
+    </menu>
+    <menu icon="alc" name="Drinks" type="left">
+        <pattern kind="category" value="Drink" />
+        <pattern kind="category" value="Alcohol" />
+    </menu>
+    <menu icon="dev" name="Devices" type="left">
+        <pattern kind="category" value="Ingestible" />
+    </menu>
+    <menu icon="gren" name="Explosives" type="right">
+        <pattern kind="category" value="Explosives" />
+    </menu>
+    <menu icon="w_1h" name="Melee" type="right">
+        <pattern kind="category" value="MeleeWeapons" />
+    </menu>
+    <menu icon="w_rifle" name="Ranged" type="right">
+        <pattern kind="category" value="RangedWeapons" />
+    </menu>
+</wheelmenu>

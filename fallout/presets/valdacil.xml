@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<!--
+Each <menu> entry defines the section in wheel menu. Menus appear in order which they were defined, from top to bottom
+type="left" or type="right" defines left/right sections of wheel to use. They're independent from each other
+"icon" is the icon name to use from DEF_UI iconlibs2.swf WITHOUT first "m_" prefix . Name should be unique for each menu entry
+closeOnUse="true" (or "false") - True will close menu after using the item, false won't. Default to true if not specified
+
+Each menu tag should contain one or more <pattern> tags which defines what items will go to this menu. Possible definitions:
+1) <pattern kind="tag" value="Aid" /> - Match by sorting tag (produced by sorting mods), without any brackets, i.e. will match [Aid] or (Aid) or {Aid} or |Aid|
+2) <pattern kind="regex" value="Some val" /> - Match by custom regex
+3) <pattern kind="category" value="RangedWeapons" onTaggedOnly="true" /> - Match by item category, use it if you don't use any sorting mod
+noTaggedOnly="true" (or "false") -> "true" instructs to include only non tagged items (i.e. without sorting keyword), "false" tells to include all items from this category
+
+Possible categories:
+RangedWeapons - All ranged weapons
+MeleeWeapons - All melee weapons
+Explosives - All grenades/mines/etc
+Food -> All food (ObjectTypeFood keyword)
+Alcohol -> All alchohol (ObjectTypeAlchohol)
+Drink -> All drinks (ObjectTypeDrink) but not alchohol
+Chems -> All chems (ObjectTypeChem)
+Ingestible -> All ingestibles what don't fall into previous categories (i.e. without proper keyword)
+
+-->
+
+<!-- Note: this is same as for VIS-G but icon names are different -->
+<wheelmenu>
+    <menu icon="med" name="Aid" type="left">
+        <pattern kind="tag" value="Aid" />
+        <pattern kind="tag" value="Device" />
+    </menu>
+    <menu icon="chem" name="Chems" type="left">
+        <pattern kind="tag" value="Blunt" />
+        <pattern kind="tag" value="Joint" />
+        <pattern kind="tag" value="Hash" />
+        <pattern kind="tag" value="Chem" />
+        <pattern kind="tag" value="Cigar" />
+        <pattern kind="tag" value="Cigarette" />
+    </menu>
+    <menu icon="food" name="Food" type="left" closeOnUse="false">
+        <pattern kind="tag" value="Food" />
+        <pattern kind="tag" value="Rad Food" />
+        <pattern kind="tag" value="Prewar" />
+        <pattern kind="tag" value="Produce" />
+    </menu>
+    <menu icon="alc" name="Drinks" type="left">
+        <pattern kind="tag" value="Drink" />
+        <pattern kind="tag" value="Liquor" />
+        <pattern kind="tag" value="Nuka" />
+        <pattern kind="tag" value="Coffee" />
+        <pattern kind="tag" value="Tea" />
+        <pattern kind="tag" value="Beer" />
+        <pattern kind="tag" value="Canteen" />
+    </menu>
+    <menu icon="gren" name="Grenades" type="right">
+        <pattern kind="tag" value="Grenade" />
+        <pattern kind="tag" value="Molotov" />
+        <pattern kind="tag" value="Nuke Grenade" />
+        <pattern kind="tag" value="Pulse Grenade" />
+        <pattern kind="tag" value="Stun Grenade" />
+        <pattern kind="tag" value="Flash Grenade" />
+        <pattern kind="tag" value="Holy Grenade" />
+    </menu>
+    <menu icon="mine" name="Mines" type="right">
+        <pattern kind="tag" value="Mine" />
+        <pattern kind="tag" value="Trap" />
+        <pattern kind="tag" value="Explosives" />
+        <pattern kind="tag" value="Dynamite" />
+    </menu>
+    <menu icon="sgren" name="Throwables" type="right">
+        <pattern kind="tag" value="Thrown" />
+        <pattern kind="tag" value="Signal" />
+        <pattern kind="tag" value="Beacon" />
+        <!-- For grenade-like without sorting tags -->
+        <pattern kind="category" value="Explosives" noTaggedOnly="true" />
+    </menu>
+</wheelmenu>
