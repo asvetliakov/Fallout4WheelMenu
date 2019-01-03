@@ -4,7 +4,7 @@ package {
 
     public class Item extends EventDispatcher {
         public static const EQUIPPED_CHANGED: String = "Item::EquippedChanged";
-        private static const SORT_REGEXP: RegExp = /^\s*[|{\[\(](.*)[|}\]\)]\s*(.*)$/;
+        private static const SORT_REGEXP: RegExp = /^\s*[|{\[\(](.+?)[|}\]\)]\s*/
         /**
          * Item form id
          */
@@ -58,7 +58,7 @@ package {
             var regexpRes: * = Item.SORT_REGEXP.exec(name);
             if (regexpRes) {
                 this.sortingName = regexpRes[1] as String;
-                this.name = regexpRes[2] as String;
+                this.name = this.name.replace(Item.SORT_REGEXP, "");
             }
         }
 
