@@ -44,8 +44,10 @@ package {
             this.hitArea = listHitArea;
             this.mouseChildren = true;
 
-            for (var i: uint = 0; i < items.length; i++) {
-                var item: Item = items[i];
+            var sortedItems: Array = items.sortOn("fullName");
+
+            for (var i: uint = 0; i < sortedItems.length; i++) {
+                var item: Item = sortedItems[i];
                 var icon: MovieClip = item.iconName ? this.iconManager.getIconInstance(item.iconName) : null;
                 var listItem: ListItem = new ListItem(i, new Point(leftPos.x + 2, leftPos.y + (i * this.ITEM_SIZE) + 2), width - 2, this.ITEM_SIZE, item, icon);
                 listItem.addEventListener(ListItem.MOUSE_CLICK, this.onItemClick);
