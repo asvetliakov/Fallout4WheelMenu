@@ -14,8 +14,16 @@
 					<plugins order="Explicit">
 						<plugin name="Vanilla">
 							<description>
-								Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted. I strongly recommend to use wheel menu with sorting mod.
-								Left pane contains: Chems, food, drinks, devices. Right pane contains: All throwable, melee weapons, ranged weapons
+Select if you're not using any sorting mods and not using Horizon. Menu categories are restricted. I strongly recommend to use wheel menu with sorting mod.
+Left pane contains:
+	Chems
+	Food
+	Drinks
+	Devices.
+Right pane contains:
+	All throwables
+	Melee weapons
+	Ranged weapons
 							</description>
 							<files>
 								<file source="presets/vanilla.xml" destination="Interface/WHEEL_MENU/conf.xml" />
@@ -26,8 +34,19 @@
 						</plugin>
 						<plugin name="Horizon">
 							<description>
-								Select if you're using Horizon overhaul.
-								Left pane contains: healing items, Cure items, Chems, Food/Drinks, Alcohol and Non-combat tools. Right pane contains: Grenades, Mines, Various flares/signals and Combat tools
+Select if you're using Horizon overhaul.
+Left pane contains:
+	Healing items
+	Cure/Radiation healing items
+	Chems
+	Food/Drinks/Water
+	Alcohol
+	Non-combat tools
+Right pane contains:
+	Grenades
+	Mines
+	Various flares/signals/mini bots
+	Combat tools/utilities (such as turrets, call dogs, etc...)
 							</description>
 							<files>
 								<file source="presets/horizon.xml" destination="Interface/WHEEL_MENU/conf.xml" />
@@ -38,8 +57,17 @@
 						</plugin>
 						<plugin name="VIS-G Item Sorting">
 							<description>
-								Select if you're using VIS-G Item Sorting mod
-								Left pane contains: Aid items, Chems, Food, Alcohol/Drinks and Non-combat tools. Right pane contains: Grenades, Mines and Other Throwables
+Select if you're using VIS-G Item Sorting mod
+Left pane contains
+	Aid items
+	Chems
+	Food
+	Alcohol/Drinks
+	Tools
+Right pane contains:
+	Grenades
+	Mines
+	Throwables (occupies grenade slot, but not grenade and mine)
 							</description>
 							<files>
 								<file source="presets/visg.xml" destination="Interface/WHEEL_MENU/conf.xml" />
@@ -50,8 +78,17 @@
 						</plugin>
 						<plugin name="Valdacil's Item Sorting">
 							<description>
-								Select if you're using Valdacil's Item Sorting mod
-								Left pane contains: Aid items, Chems, Food, Alcohol/Drinks and Non-combat tools. Right pane contains: Grenades, Mines and Other Throwables
+Select if you're using Valdacil's Item Sorting mod
+Left pane contains
+	Aid items
+	Chems
+	Food
+	Alcohol/Drinks
+	Tools
+Right pane contains:
+	Grenades
+	Mines
+	Throwables (occupies grenade slot, but not grenade and mine)
 							</description>
 							<files>
 								<file source="presets/valdacil.xml" destination="Interface/WHEEL_MENU/conf.xml" />
