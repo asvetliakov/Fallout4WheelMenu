@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<!--
+Each <menu> entry defines the section in wheel menu. Menus appear in order which they were defined, from top to bottom
+type="left" or type="right" defines left/right sections of wheel to use. They're independent from each other
+"icon" is the icon name to use from DEF_UI iconlibs2.swf WITHOUT first "m_" prefix . Name should be unique for each menu entry
+closeOnUse="true" (or "false") - True will close menu after using the item, false won't. Default to true if not specified
+
+Each menu tag should contain one or more <pattern> tags which defines what items will go to this menu. Possible definitions:
+1) <pattern kind="tag" value="Aid" /> - Match by sorting tag (produced by sorting mods), without any brackets, i.e. will match [Aid] or (Aid) or {Aid} or |Aid|
+2) <pattern kind="regex" value="Some val" /> - Match by custom regex
+3) <pattern kind="category" value="RangedWeapons" onTaggedOnly="true" /> - Match by item category, use it if you don't use any sorting mod
+noTaggedOnly="true" (or "false") -> "true" instructs to include only non tagged items (i.e. without sorting keyword), "false" tells to include all items from this category
+
+Possible categories:
+RangedWeapons - All ranged weapons
+MeleeWeapons - All melee weapons
+Explosives - All grenades/mines/etc
+Food -> All food (ObjectTypeFood keyword)
+Alcohol -> All alchohol (ObjectTypeAlchohol)
+Drink -> All drinks (ObjectTypeDrink) but not alchohol
+Chems -> All chems (ObjectTypeChem)
+Ingestible -> All ingestibles what don't fall into previous categories (i.e. without proper keyword)
+
+-->
+
+<!-- Note: this is same as for VIS-G but icon names are different -->
+<wheelmenu>
+    <!-- Left pane, various ingestibles, aid, non-combat tools, sorted by priority -->
+
+    <!-- Aid, trauma kits, combat aid -->
+    <menu icon="med" name="Aid" type="left">
+        <pattern kind="tag" value="Aid" />
+        <!-- Combat aid tier 1 -->
+        <pattern kind="tag" value="+" />
+        <!-- Combat aid tier 2 -->
+        <pattern kind="tag" value="++" />
+        <!-- Trauma kit -->
+        <pattern kind="tag" value="+T" />
+    </menu>
+    <!-- Radiation healing, radiation resistances, illiness healing -->
+    <menu icon="n_flask" name="Cure" type="left">
+        <pattern kind="tag" value="Cure" />
+        <!-- Radiation healing -->
+        <pattern kind="tag" value="-R" />
+        <!-- illiness healing -->
+        <pattern kind="tag" value="-X" />
+        <!-- Resistances -->
+        <pattern kind="tag" value="?" />
+    </menu>
+    <!-- Chems -->
+    <menu icon="chem" name="Chems" type="left">
+        <pattern kind="tag" value="Blunt" />
+        <pattern kind="tag" value="Joint" />
+        <pattern kind="tag" value="Hash" />
+        <pattern kind="tag" value="Chem" />
+        <pattern kind="tag" value="Cigar" />
+        <pattern kind="tag" value="Cigarette" />
+        <!-- Chems -->
+        <pattern kind="tag" value="~" />
+        <pattern kind="tag" value="~C" />
+        <pattern kind="tag" value="~A" />
+    </menu>
+    <!-- Alcohol/Nuka -->
+    <menu icon="alc" name="Drinks" type="left">
+        <pattern kind="tag" value="Liquor" />
+        <pattern kind="tag" value="Nuka" />
+        <pattern kind="tag" value="Beer" />
+        <!-- Nuka -->
+        <pattern kind="tag" value="=C" />
+    </menu>
+    <!-- Food, good food, water, bad water -->
+    <menu icon="food" name="Food" type="left" closeOnUse="false">
+        <pattern kind="tag" value="Coffee" />
+        <pattern kind="tag" value="Tea" />
+        <pattern kind="tag" value="Canteen" />
+        <pattern kind="tag" value="Drink" />
+        <!-- Good non rad drinks -->
+        <pattern kind="tag" value="==" />
+        <!-- Rad drinks -->
+        <pattern kind="tag" value="=" />
+        <!-- Good food -->
+        <pattern kind="tag" value="Food" />
+        <pattern kind="tag" value="Meal" />
+        <!-- Rad food -->
+        <pattern kind="tag" value="Rad Food" />
+        <pattern kind="tag" value="Prewar" />
+    </menu>
+    <!-- Various non combat tools -->
+    <menu icon="tool" name="Tools" type="left">
+        <pattern kind="tag" value="Device" />
+        <!-- Science toolkit -->
+        <pattern kind="tag" value="X" />
+        <!-- Cargo bot -->
+        <pattern kind="tag" value="^" />
+        <!-- Fish(?) -->
+        <pattern kind="tag" value="^Fish" />
+        <!-- Portable memory device -->
+        <pattern kind="tag" value="^M" />
+        <!-- Personal toolkit -->
+        <pattern kind="tag" value="!T" />
+        <!-- Various packages(?) -->
+        <pattern kind="tag" value="!P" />
+        <!-- Settler(?) -->
+        <pattern kind="tag" value="!Settler" />
+        <!-- Outdated devices -->
+        <pattern kind="tag" value="D-" />
+        <!-- City -->
+        <pattern kind="tag" value="City" />
+        <!-- Craft -->
+        <pattern kind="tag" value="Craft" />
+    </menu>
+    <!-- Right pane -->
+    <!-- Grenades -->
+    <menu icon="gren" name="Grenades" type="right">
+        <pattern kind="tag" value="Grenade" />
+        <pattern kind="tag" value="Molotov" />
+        <pattern kind="tag" value="Nuke Grenade" />
+        <pattern kind="tag" value="Pulse Grenade" />
+        <pattern kind="tag" value="Stun Grenade" />
+        <pattern kind="tag" value="Flash Grenade" />
+        <pattern kind="tag" value="Holy Grenade" />
+        <pattern kind="tag" value="GrenadeE" />
+        <pattern kind="tag" value="GrenadeK" />
+        <!-- Note: GrenadeM goes to flares/drone menu -->
+    </menu>
+    <!-- Mines -->
+    <menu icon="mine" name="Mines" type="right">
+        <pattern kind="tag" value="Mine" />
+        <pattern kind="tag" value="Trap" />
+        <pattern kind="tag" value="Explosives" />
+        <pattern kind="tag" value="Dynamite" />
+        <pattern kind="tag" value="MineC" />
+        <pattern kind="tag" value="MineE" />
+    </menu>
+    <!-- Flares/sygnals/bots -->
+    <menu icon="w_revo" name="Flares" type="right">
+        <pattern kind="tag" value="FlareA" />
+        <pattern kind="tag" value="FlareG" />
+        <pattern kind="tag" value="FlareS" />
+        <pattern kind="tag" value="FlareV" />
+        <pattern kind="tag" value="GrenadeM" />
+        <pattern kind="tag" value="Syringe" />
+    </menu>
+    <!-- Combat tools -->
+    <menu icon="sgren" name="Throwables" type="right">
+        <!-- Prismatic shield generator and some deployable stuff -->
+        <pattern kind="tag" value="A" />
+        <!-- Call dogs/animals -->
+        <pattern kind="tag" value="^D" />
+        <!-- Deploy turret -->
+        <pattern kind="tag" value="^T" />
+        <!-- Stealth boys -->
+        <pattern kind="tag" value="^S" />
+        <!-- Weapon toolkit -->
+        <pattern kind="tag" value="!W" />
+        <!-- Grenade menu(?) -->
+        <pattern kind="tag" value="!Y" />
+    </menu>
+</wheelmenu>
