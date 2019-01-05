@@ -7,7 +7,8 @@
         {
             "type": "swf",
             "request": "launch",
-            "name": "Launch SWF"
+            "name": "Launch SWF",
+            "preLaunchTask": "ActionScript: compile debug - asconfig.json"
         },
         {
             "type": "swf",
