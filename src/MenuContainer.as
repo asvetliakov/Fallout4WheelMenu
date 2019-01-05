@@ -128,6 +128,7 @@ package {
             this.addEventListener(MouseEvent.MOUSE_MOVE, this.onMouseMove);
             this.addEventListener(MouseEvent.CLICK, this.onMouseClick);
             this.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOut);
+            this.addEventListener(MouseEvent.MOUSE_WHEEL, this.onMouseWheel);
 
             this.pointer = new Shape();
             this.pointer.graphics.beginFill(0xffffff, 0.35);
@@ -215,6 +216,17 @@ package {
                     this.pointer.rotationZ = -degs;
                 }
             }
+        }
+
+        private function onMouseWheel(ev: MouseEvent): void {
+            var delta: int = ev.delta;
+            // delta === 0 -> one item down
+            // delta === 1 -> one item up
+            // delta < 0 -> delta items down
+            // delta > 1 -> delta items up
+            // if (delta === 0) {
+
+            // }
         }
 
         private function updateActiveItemFromMouseDeg(degs: Number, left: Boolean = false): void {
