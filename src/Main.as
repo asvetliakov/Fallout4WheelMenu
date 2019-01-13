@@ -204,7 +204,7 @@ package {
 				for each (var pattern: XML in menu.children()) {
 					menuItem.patterns.push({
 						kind: pattern.@kind[0].toString(),
-						value: pattern.@value[0].toString().toLowerCase(),
+						value: pattern.@value[0].toString(),
 						noTaggedOnly: pattern.@noTaggedOnly[0] && pattern.@noTaggedOnly[0].toString() === "true" ? true : false
 					})
 				}
@@ -363,7 +363,7 @@ package {
 							break;
 						}
 						case "category": {
-							if ((item.defaultCategory === pattern.value) && (!pattern.noTaggedOnly || (pattern.noTaggedOnly && !item.sortingName))) {
+							if ((item.defaultCategory === pattern.value.toLowerCase()) && (!pattern.noTaggedOnly || (pattern.noTaggedOnly && !item.sortingName))) {
 								inventoryNames.push(menuItem.name);
 							}
 							break;
