@@ -38,8 +38,8 @@ package {
             this.addChild(listHitArea);
 
             this.graphics.moveTo(leftPos.x, leftPos.y);
-            this.graphics.lineStyle(2, 0xffffff, 0.4, true);
-            this.graphics.beginFill(0x000000, 0.4);
+            this.graphics.lineStyle(2, 0xffffff, 0.8, true);
+            this.graphics.beginFill(0x202020, 0.75);
             this.graphics.drawRect(leftPos.x, leftPos.y, width, height);
             this.hitArea = listHitArea;
             this.mouseChildren = true;
@@ -49,7 +49,8 @@ package {
             for (var i: uint = 0; i < sortedItems.length; i++) {
                 var item: Item = sortedItems[i];
                 var icon: MovieClip = item.iconName ? this.iconManager.getIconInstance(item.iconName) : null;
-                var listItem: ListItem = new ListItem(i, new Point(leftPos.x + 2, leftPos.y + (i * this.ITEM_SIZE) + 2), width - 2, this.ITEM_SIZE, item, icon);
+                // substract borders from item width. For some reason 4 (border width * 2) doesn't look good
+                var listItem: ListItem = new ListItem(i, new Point(leftPos.x + 2, leftPos.y + (i * this.ITEM_SIZE) + 2), width - 3, this.ITEM_SIZE, item, icon);
                 listItem.addEventListener(ListItem.MOUSE_CLICK, this.onItemClick);
                 this.addChild(listItem);
             }

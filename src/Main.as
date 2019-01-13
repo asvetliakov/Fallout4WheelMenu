@@ -38,7 +38,7 @@ package {
 		/**
 		 * Item list height // 16 items max
 		 */
-		private const listHeight: uint = 500;
+		private const listHeight: uint = 483;
 		/**
 		 * Item list margin from the radial menu
 		 */

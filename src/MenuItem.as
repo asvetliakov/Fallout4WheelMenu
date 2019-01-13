@@ -50,20 +50,12 @@ package {
                 this.icon = icon;
                 this.icon.scaleX = 0.5;
                 this.icon.scaleY = 0.5;
-                this.icon.alpha = 0.5;
+                this.icon.alpha = 0.7;
                 this.updateIconPos();
                 this.addChild(icon);
             }
 
-            this._active = active;
-            if (active) {
-                lineObj.alpha = 0.35;
-                if (this.icon) {
-                    this.icon.alpha = 1;
-                    this.icon.scaleX = 1.15;
-                    this.icon.scaleY = 1.15;
-                }
-            }
+            this.active = active;
         }
 
         public function get active(): Boolean {
@@ -75,14 +67,14 @@ package {
             if (v) {
                 if (this.icon) {
                     this.icon.alpha = 1;
-                    this.icon.scaleX = 0.8;
-                    this.icon.scaleY = 0.8;
+                    this.icon.scaleX = 0.85;
+                    this.icon.scaleY = 0.85;
                     this.updateIconPos();
                 }
-                this.lineObj.alpha = 0.35;
+                this.lineObj.alpha = 0.7;
             } else {
                 if (this.icon) {
-                    this.icon.alpha = 0.5;
+                    this.icon.alpha = 0.7;
                     this.icon.scaleX = 0.5;
                     this.icon.scaleY = 0.5;
                     this.updateIconPos();

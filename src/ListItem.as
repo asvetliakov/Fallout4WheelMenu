@@ -7,6 +7,9 @@ package {
     import flash.text.TextFieldAutoSize;
     import flash.events.MouseEvent;
     import flash.text.TextFormat;
+    import flash.geom.ColorTransform;
+    import flash.display.BlendMode;
+    import flash.text.AntiAliasType;
 
     public class ListItem extends Sprite {
         public static const MOUSE_ENTER: String = "ListItem::MouseEnter";
@@ -25,7 +28,9 @@ package {
 
         private var equippedMarker: Shape;
 
-        private var containerSprite: Sprite;
+        private var containerHitArea: Sprite;
+
+        private var _highlightedBox: Sprite;
 
         private var _item: Item;
 
@@ -41,7 +46,7 @@ package {
             this._height = height;
             this.icon = icon;
             // render separator line
-            this.graphics.lineStyle(1, 0xffffff, 0.2, true);
+            this.graphics.lineStyle(1, 0xffffff, 0.4, true);
             this.graphics.moveTo(this._pos.x, this._pos.y + this._height);
             this.graphics.lineTo(this._pos.x + this._width, this._pos.y + this._height);
 
@@ -52,8 +57,8 @@ package {
         }
 
         private function drawContent(initial: Boolean = true): void {
-            if (this.containerSprite) {
-                this.removeChild(this.containerSprite);
+            if (this.containerHitArea) {
+                this.removeChild(this.containerHitArea);
             }
             if (this.icon) {
                 this.removeChild(this.icon);
@@ -64,17 +69,28 @@ package {
             if (this.text) {
                 this.removeChild(this.text);
             }
-            if (this.contextMenu) {
+            if (this.countText) {
                 this.removeChild(this.countText);
             }
 
-            this.containerSprite = new Sprite();
-            this.containerSprite.graphics.beginFill(0x000000, 1);
-            this.containerSprite.graphics.drawRect(this._pos.x, this._pos.y, this._width, this._height);
-            this.containerSprite.graphics.endFill();
-            this.containerSprite.alpha = 0.1;
-            this.addChild(containerSprite);
-            this.hitArea = this.containerSprite;
+            if (this._highlightedBox) {
+                this.removeChild(this._highlightedBox);
+            }
+
+            this.containerHitArea = new Sprite();
+            this.containerHitArea.graphics.beginFill(0x000000, 0);
+            this.containerHitArea.graphics.drawRect(this._pos.x, this._pos.y, this._width, this._height);
+            this.containerHitArea.graphics.endFill();
+            // this.containerSprite.alpha = 0.1;
+            this._highlightedBox = new Sprite();
+            this._highlightedBox.graphics.beginFill(0xffffff, 1);
+            this._highlightedBox.graphics.drawRect(this._pos.x, this._pos.y, this._width, this._height);
+            this._highlightedBox.graphics.endFill();
+            this._highlightedBox.alpha = 0;
+
+            this.addChild(this.containerHitArea);
+            this.addChild(this._highlightedBox);
+            this.hitArea = this.containerHitArea;
             // this.mouseChildren = false;
             this.mouseEnabled = true;
 
@@ -96,6 +112,7 @@ package {
                 this.icon.x = nextElementX;
                 this.icon.y = this._pos.y + this.paddings;
                 this.icon.mouseEnabled = false;
+                this.icon.blendMode = BlendMode.NORMAL;
                 this.addChild(this.icon);
 
                 nextElementX += this.icon.width + 10;
@@ -104,7 +121,7 @@ package {
             // render equipped marker
             if (this.item.equipped) {
                 this.equippedMarker = new Shape();
-                this.equippedMarker.graphics.beginFill(0xffffff, 0.5);
+                this.equippedMarker.graphics.beginFill(0xffffff, 0.7);
                 this.equippedMarker.graphics.moveTo(nextElementX - 5, this._pos.y + elementsHeight / 2 - 5);
                 this.equippedMarker.graphics.lineTo(nextElementX, this._pos.y + elementsHeight / 2 + 5);
                 this.equippedMarker.graphics.lineTo(nextElementX + 5, this._pos.y + elementsHeight / 2 - 5);
@@ -118,7 +135,8 @@ package {
             }
             // render text
             this.text = new TextField();
-            this.text.defaultTextFormat = new TextFormat("$MAIN_Font", 14);
+            this.text.defaultTextFormat = new TextFormat("$MAIN_Font", 14, null);
+            this.text.antiAliasType = AntiAliasType.ADVANCED;
             // this.text.embedFonts = true;
             // this.text.autoSize = TextFieldAutoSize.LEFT;
             this.text.text = this.item.name;
@@ -136,7 +154,8 @@ package {
 
             // render count
             this.countText = new TextField();
-            this.countText.defaultTextFormat = new TextFormat("$MAIN_Font");
+            this.countText.defaultTextFormat = new TextFormat("$MAIN_Font", 14, null);
+            this.countText.antiAliasType = AntiAliasType.ADVANCED;
             // this.text.embedFonts = true;
             // this.countText.autoSize = TextFieldAutoSize.RIGHT;
             this.countText.text = String(this.item.count);
@@ -162,11 +181,20 @@ package {
 
         public function set highlighted(v: Boolean): void {
             if (v) {
-                this.containerSprite.alpha = 0.5;
+                // this.transform.colorTransform = new ColorTransform(1, 1, 1, 1);
+                this._highlightedBox.alpha = 1;
+                this.text.textColor = 0x000000;
+                this.countText.textColor = 0x000000;
                 this._highlighted = true;
+                this.icon.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
+                this.equippedMarker.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
             } else if (!this._item.equipped) {
-                this.containerSprite.alpha = 0.1;
+                this._highlightedBox.alpha = 0;
+                this.text.textColor = 0xffffff;
+                this.countText.textColor = 0xffffff;
                 this._highlighted = false;
+                this.icon.transform.colorTransform = null;
+                this.equippedMarker.transform.colorTransform = null;
             }
         }
 

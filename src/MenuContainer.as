@@ -67,11 +67,11 @@ package {
 
             // create menu circle borders
             var circ: Shape = new Shape();
-            circ.graphics.beginFill(0x000000, 0.7);
-            circ.graphics.lineStyle(3, 0xffffff, 0.1, true);
+            circ.graphics.beginFill(0x202020, 0.75);
+            circ.graphics.lineStyle(3, 0x0ffffff, 0.2, true);
             circ.graphics.drawCircle(0, 0, this.outerRadius);
             circ.graphics.drawCircle(0, 0, this.innerRadius);
-            // circ.graphics.endFill();
+            circ.graphics.endFill();
             this.addChild(circ);
 
             // add stub menu item at the top
@@ -131,7 +131,7 @@ package {
             this.addEventListener(MouseEvent.MOUSE_WHEEL, this.onMouseWheel);
 
             this.pointer = new Shape();
-            this.pointer.graphics.beginFill(0xffffff, 0.35);
+            this.pointer.graphics.beginFill(0xffffff, 0.8);
             this.pointer.graphics.moveTo(-10, 5);
             this.pointer.graphics.lineTo(0, -20);
             this.pointer.graphics.lineTo(10, 5);
