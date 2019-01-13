@@ -46,7 +46,7 @@ Struct ItemFind
 EndStruct
 
 ; Easier and faster to track them separately
-; max arr length in papyrus is 128 so use secondary arr in this case
+; max arr length in papyrus is 128 so use secondary arr in case when has more items
 Item[] weaponInventoryItems
 Item[] weaponInventoryItems2
 Item[] ingestibleInventoryItems
@@ -73,7 +73,6 @@ string Function GetItemCategory(Form item)
         ElseIf (item.HasKeyword(FoodKeyword))
             return FOOD
         Else
-            Debug.Trace("WheelMenu: Assigning general ingestible to: " + item.GetName())
             return INGESTIBLE
         EndIf
     Endif
@@ -165,7 +164,7 @@ Function InitInventoryItems(Actor player)
             invItem.Id = item.GetFormID()
             invItem.Name = item.GetName()
             invItem.Description = ""
-            ; Only once when initialization, later we'll track them though onItemAdded/Removed/Equipped
+            ; Only once on initialization, later we'll track them though onItemAdded/Removed/Equipped
             invItem.Count = player.GetItemCount(item)
             invItem.Equipped = false
             invItem.Category = GetItemCategory(item)
@@ -178,6 +177,7 @@ Function InitInventoryItems(Actor player)
     int totalWeapons = weaponInventoryItems.Length + weaponInventoryItems2.Length
     int totalIngestibles = ingestibleInventoryItems.Length + ingestibleInventoryItems2.Length
     Debug.Trace("WheelMenu: Initial items were initialized, weapon count: " + totalWeapons + ", ingestible count: " + totalIngestibles)
+
 EndFunction
 
 Function RemoveItem(Form item, int count = 1)
