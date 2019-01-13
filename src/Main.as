@@ -124,7 +124,7 @@ package {
 						var data: Object = invItem["__var__"]["__struct__"]["__data__"];
 						// for some reason int fields are lowercased
 						var item: Item = new Item(data["id"], data["Name"], data["Description"], data["count"], data["Category"], data["Equipped"]);
-						trace("WheelMenu: Item, formId: " + item.id + ", Name: " + item.name);
+						trace("WheelMenu: Item, formId: " + item.id + ", Name: " + item.name + ", Category: " + item.defaultCategory);
 						if (item.sortingName) {
 							var iconName: String = this.getItemIcon(item.sortingName);
 							if (iconName) {
@@ -204,7 +204,7 @@ package {
 				for each (var pattern: XML in menu.children()) {
 					menuItem.patterns.push({
 						kind: pattern.@kind[0].toString(),
-						value: pattern.@value[0].toString(),
+						value: pattern.@value[0].toString().toLowerCase(),
 						noTaggedOnly: pattern.@noTaggedOnly[0] && pattern.@noTaggedOnly[0].toString() === "true" ? true : false
 					})
 				}
@@ -357,7 +357,7 @@ package {
 							break;
 						}
 						case "regex": {
-							if (item.fullName.match(new RegExp(pattern.value))) {
+							if (item.fullName.match(new RegExp(pattern.value, "i"))) {
 								inventoryNames.push(menuItem.name);
 							}
 							break;

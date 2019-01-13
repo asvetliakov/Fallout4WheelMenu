@@ -51,13 +51,13 @@ package {
             this.description = description;
             this.count = count;
             this._equipped = equipped;
-            this.iconName = iconName;
-            this.defaultCategory = defaultCategory;
+            this.iconName = iconName ? iconName.toLowerCase() : null;
+            this.defaultCategory = defaultCategory.toLowerCase();
             this.sortingName = null;
 
             var regexpRes: * = Item.SORT_REGEXP.exec(name);
             if (regexpRes) {
-                this.sortingName = regexpRes[1] as String;
+                this.sortingName = (regexpRes[1] as String).toLowerCase();
                 this.name = this.name.replace(Item.SORT_REGEXP, "");
             }
         }
