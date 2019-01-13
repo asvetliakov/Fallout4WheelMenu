@@ -40,9 +40,17 @@ Struct MenuConf
     float scaling
 EndStruct
 
+Struct ItemFind
+    int index
+    int usedArray
+EndStruct
+
 ; Easier and faster to track them separately
+; max arr length in papyrus is 128 so use secondary arr in this case
 Item[] weaponInventoryItems
+Item[] weaponInventoryItems2
 Item[] ingestibleInventoryItems
+Item[] ingestibleInventoryItems2
 
 ; Return default sorting category for the form
 string Function GetItemCategory(Form item)
@@ -65,16 +73,85 @@ string Function GetItemCategory(Form item)
         ElseIf (item.HasKeyword(FoodKeyword))
             return FOOD
         Else
+            Debug.Trace("WheelMenu: Assigning general ingestible to: " + item.GetName())
             return INGESTIBLE
         EndIf
     Endif
 EndFunction
 
+Item[] Function GetAvailableArrayForItem(Form item)
+    If (item is Weapon)
+        If (weaponInventoryItems.Length < 128)
+            return weaponInventoryItems
+        Else
+            return weaponInventoryItems2
+        Endif
+    Else
+        If (ingestibleInventoryItems.Length < 128)
+            return ingestibleInventoryItems
+        Else
+            return ingestibleInventoryItems2
+        EndIf
+    Endif
+EndFunction
+
+Item[] Function GetArrayForFindItem(ItemFind item, Form formItem)
+    if (formItem is Weapon)
+        if (item.usedArray == 1)
+            return weaponInventoryItems
+        else
+            return weaponInventoryItems2
+        endif
+    else
+        if (item.usedArray == 1)
+            return ingestibleInventoryItems
+        else
+            return ingestibleInventoryItems2
+        endif
+    endif
+EndFunction
+
+ItemFind Function FindItemInArray(Form item)
+    int id = item.GetFormID()
+    int usedArray = 0
+    If (item is Weapon)
+        int itemIndex = weaponInventoryItems.FindStruct("Id", id)
+        usedArray = 1
+        If (itemIndex < 0)
+            itemIndex = weaponInventoryItems2.FindStruct("Id", id)
+            usedArray = 2
+        Endif
+        if (itemIndex >= 0)
+            ItemFind found = new ItemFind
+            found.index = itemIndex
+            found.usedArray = usedArray
+            return found
+        Endif
+    ElseIf (item is Potion)
+        int itemIndex = ingestibleInventoryItems.FindStruct("Id", id)
+        usedArray = 1
+        If (itemIndex < 0)
+            itemIndex = ingestibleInventoryItems2.FindStruct("Id", id)
+            usedArray = 2
+        Endif
+        if (itemIndex >= 0)
+            ItemFind found = new ItemFind
+            found.index = itemIndex
+            found.usedArray = usedArray
+            return found
+        Endif
+    Endif
+    return None
+EndFunction
+
+
 ; Init inventory items. Run on game/quest initialization
 Function InitInventoryItems(Actor player)
     Debug.Trace("WheelMenu: Initializing player inventory")
     weaponInventoryItems = new Item[0]
+    weaponInventoryItems2 = new Item[0]
     ingestibleInventoryItems = new Item[0]
+    ingestibleInventoryItems2 = new Item[0]
     ; Getting inventory items is fast
     ; Iterating through items is fast
     ; Calculating count of items in inventory is SLOW
@@ -93,55 +170,43 @@ Function InitInventoryItems(Actor player)
             invItem.Equipped = false
             invItem.Category = GetItemCategory(item)
 
-            If (item is Weapon)
-                weaponInventoryItems.Add(invItem)
-            Else
-                ingestibleInventoryItems.Add(invItem)
-            Endif
+            Item[] arr = GetAvailableArrayForItem(item)
+            arr.Add(invItem)
         Endif
         currentItem += 1
     EndWhile
-    Debug.Trace("WheelMenu: Initial items were initialized, weapon count: " + weaponInventoryItems.Length + ", ingestible count: " + ingestibleInventoryItems.Length)
+    int totalWeapons = weaponInventoryItems.Length + weaponInventoryItems2.Length
+    int totalIngestibles = ingestibleInventoryItems.Length + ingestibleInventoryItems2.Length
+    Debug.Trace("WheelMenu: Initial items were initialized, weapon count: " + totalWeapons + ", ingestible count: " + totalIngestibles)
 EndFunction
 
 Function RemoveItem(Form item, int count = 1)
-    Item[] arr
-    If (item is Weapon)
-        arr = weaponInventoryItems
-    ElseIf (item is Potion)
-        arr = ingestibleInventoryItems
-    Else
+    ItemFind foundItem = FindItemInArray(item)
+    If (!foundItem)
         Return
     Endif
-    int itemIndex = arr.FindStruct("Id", item.GetFormID())
-    If (itemIndex < 0)
-        Return
+    Item[] arr = GetArrayForFindItem(foundItem, item)
+    Item invItem = arr[foundItem.index]
+    If (!invItem)
+        return
     Endif
-    Item invItem = arr[itemIndex]
     invItem.Count -= count;
     ; last consumed/removed , remove
     If (invItem.Count <= 0)
-        arr.Remove(itemIndex)
+        arr.Remove(foundItem.index)
     Endif
 EndFunction
 
 Function AddItem(Form item, int count = 1)
-    Item[] arr
-    If (item is Weapon)
-        arr = weaponInventoryItems
-    ElseIf (item is Potion)
-        arr = ingestibleInventoryItems
-    Else
-        Return
-    Endif
-    int id = item.GetFormID()
-    int currentItemIndex = arr.FindStruct("Id", id)
-    If (currentItemIndex >= 0)
-        ; exist, just increase count
-        Item invItem = arr[currentItemIndex]
+    ItemFind foundItem = FindItemInArray(item)
+    If (foundItem)
+        Item[] arr = GetArrayForFindItem(foundItem, item)
+        Item invItem = arr[foundItem.index]
         invItem.Count += count
     Else
         ; new item added
+        Item[] arr = GetAvailableArrayForItem(item)
+        int id = item.GetFormID()
         Item invItem = new Item
         invItem.Id = id
         invItem.Name = item.GetName()
@@ -263,7 +328,9 @@ Function onMenuInit()
         UI.Set(WheelMenuName, "root1.menuPos", conf)
 
         UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(ingestibleInventoryItems as Var[]))
+        UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(ingestibleInventoryItems2 as Var[]))
         UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(weaponInventoryItems as Var[]))
+        UI.Set(WheelMenuName, "root1.inventoryItems", Utility.VarArrayToVar(weaponInventoryItems2 as Var[]))
 
         ; Set equipped status
         Actor player = Game.GetPlayer()
