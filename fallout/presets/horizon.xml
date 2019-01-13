@@ -109,6 +109,8 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <pattern kind="tag" value="City" />
         <!-- Craft -->
         <pattern kind="tag" value="Craft" />
+        <!-- Tools devices (Sim settlements patch uses this tag for gavel, immersion breaker, etc...) -->
+        <pattern kind="tag" value="#" />
     </menu>
     <!-- Right pane -->
     <!-- Grenades -->
