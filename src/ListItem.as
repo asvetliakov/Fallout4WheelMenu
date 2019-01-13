@@ -117,9 +117,13 @@ package {
 
                 nextElementX += this.icon.width + 10;
                 availableWidth -= (this.icon.width + 10);
+            } else {
+                // increase left padding in case if icon is not available
+                nextElementX += 8;
+                availableWidth -= 8;
             }
             // render equipped marker
-            if (this.item.equipped) {
+            if (this._item.equipped) {
                 this.equippedMarker = new Shape();
                 this.equippedMarker.graphics.beginFill(0xffffff, 0.7);
                 this.equippedMarker.graphics.moveTo(nextElementX - 5, this._pos.y + elementsHeight / 2 - 5);
@@ -139,7 +143,7 @@ package {
             this.text.antiAliasType = AntiAliasType.ADVANCED;
             // this.text.embedFonts = true;
             // this.text.autoSize = TextFieldAutoSize.LEFT;
-            this.text.text = this.item.name;
+            this.text.text = this._item.name;
             this.text.textColor = 0xffffff;
             this.text.x = nextElementX;
             this.text.y = _pos.y + this.paddings;
@@ -158,7 +162,7 @@ package {
             this.countText.antiAliasType = AntiAliasType.ADVANCED;
             // this.text.embedFonts = true;
             // this.countText.autoSize = TextFieldAutoSize.RIGHT;
-            this.countText.text = String(this.item.count);
+            this.countText.text = String(this._item.count);
             this.countText.textColor = 0xffffff;
             this.countText.x = nextElementX;
             this.countText.y = _pos.y + this.paddings;
@@ -170,7 +174,7 @@ package {
             this.useHandCursor = true;
             this.countText.mouseEnabled = false;
 
-            if (this.item.equipped) {
+            if (this._item.equipped) {
                 this.highlighted = true;
             }
         }
@@ -186,14 +190,18 @@ package {
                 this.text.textColor = 0x000000;
                 this.countText.textColor = 0x000000;
                 this._highlighted = true;
-                this.icon.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
+                if (this.icon) {
+                    this.icon.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
+                }
                 this.equippedMarker.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
             } else if (!this._item.equipped) {
                 this._highlightedBox.alpha = 0;
                 this.text.textColor = 0xffffff;
                 this.countText.textColor = 0xffffff;
                 this._highlighted = false;
-                this.icon.transform.colorTransform = null;
+                if (this.icon) {
+                    this.icon.transform.colorTransform = null;
+                }
                 this.equippedMarker.transform.colorTransform = null;
             }
         }
