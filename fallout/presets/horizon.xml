@@ -124,7 +124,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <pattern kind="tag" value="Holy Grenade" />
         <pattern kind="tag" value="GrenadeE" />
         <pattern kind="tag" value="GrenadeK" />
-        <!-- Note: GrenadeM goes to flares/drone menu -->
+        <pattern kind="tag" value="GrenadeM" />
     </menu>
     <!-- Mines -->
     <menu icon="mine" name="Mines" type="right">
@@ -141,7 +141,6 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <pattern kind="tag" value="FlareG" />
         <pattern kind="tag" value="FlareS" />
         <pattern kind="tag" value="FlareV" />
-        <pattern kind="tag" value="GrenadeM" />
         <pattern kind="tag" value="Syringe" />
     </menu>
     <!-- Combat tools -->
