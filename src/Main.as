@@ -154,7 +154,8 @@ package {
 
 		public function set menuPos(val: Object): void {
 			var data: Object = val["__struct__"]["__data__"];
-			this._offsetPoint = new Point(data["offsetX"] || 0, data["offsetY"] || 0);
+			// Some magic here - it MAY become different casing
+			this._offsetPoint = new Point(data["offsetx"] || data["Offsetx"] || data["OffsetX"] || 0, data["offsety"] || data["Offsety"] || data["OffsetY"] || 0);
 			this._scaling = data["scaling"] || 1;
 			this.scaleX = this._scaling;
 			this.scaleY = this._scaling;
