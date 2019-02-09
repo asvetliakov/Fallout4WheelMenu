@@ -13,6 +13,8 @@ package {
 	import flash.net.URLLoader;
 	import flash.display.StageScaleMode;
 	import flash.text.Font;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 
     [SWF(width="1920", height="1080", backgroundColor="#393939", frameRate="24")]
 	public class Main extends MovieClip implements ICodeObject {
@@ -104,6 +106,8 @@ package {
 			var confLoader: URLLoader = new URLLoader();
 			confLoader.addEventListener(Event.COMPLETE, this.onConfLoaded);
 			confLoader.load(new URLRequest("./WHEEL_MENU/conf.xml"));
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
+			this.stage.addEventListener(MouseEvent.MOUSE_WHEEL, this.onWheel);
 		}
 
 		public function get inventoryItems(): Array {
@@ -123,7 +127,14 @@ package {
 					try {
 						var data: Object = invItem["__var__"]["__struct__"]["__data__"];
 						// for some reason int fields are lowercased
-						var item: Item = new Item(data["id"], data["Name"], data["Description"], data["count"], data["Category"], data["Equipped"]);
+						var item: Item = new Item(
+							this.getDataField(data, "id"),
+							this.getDataField(data, "Name"),
+							this.getDataField(data, "Description"),
+							this.getDataField(data, "count"),
+							this.getDataField(data, "Category"),
+							this.getDataField(data, "Equipped")
+						);
 						trace("WheelMenu: Item, formId: " + item.id + ", Name: " + item.name + ", Category: " + item.defaultCategory);
 						if (item.sortingName) {
 							var iconName: String = this.getItemIcon(item.sortingName);
@@ -250,6 +261,12 @@ package {
 			} catch (err: Error) {
 				trace("WheelMenu: Sending WheelMenuInit failed");
 			}
+			// testing code
+			// this.inventoryItemsMap["Aid"] = [];
+			// for (var i: int = 0; i < 40; i++) {
+			// 	this.inventoryItemsMap["Aid"].push(new Item(i, "(Aid) test " + i, "", 1, "Aid", false, this.getItemIcon("Aid")));
+			// }
+			// this.drawMenu();
 		}
 
 		private function drawMenu(): void {
@@ -270,12 +287,55 @@ package {
 
 		private function redrawCurrentList(): void {
 			if (this.list) {
-				var name: String = this.list.categoryName;
-				var type: String = this.list.type;
+				var name: String = this.list._categoryName;
+				var type: String = this.list._type;
 				this.removeChild(this.list);
 				this.list = null;
 				this.showList(type, name);
 			}
+		}
+
+		private function onKeyDown(event: KeyboardEvent): void {
+			if (!this.list) {
+				return;
+			}
+
+			// w - 87
+			// s - 83
+			// e - 69
+			switch (event.keyCode) {
+				case 87: {
+					this.list.highlightNextItem(-1);
+					break;
+				}
+				case 83: {
+					this.list.highlightNextItem(1);
+					break;
+				}
+				case 69: {
+					this.list.selectCurrentItem();
+					break;
+				}
+			}
+		}
+
+		private function onWheel(event: MouseEvent): void {
+			if (!this.list) {
+				return;
+			}
+            var delta: int = event.delta;
+            // delta === 0 -> one item down
+            // delta === 1 -> one item up
+            // delta < 0 -> delta items down
+            // delta > 1 -> delta items up
+
+            // scroll max 1 item
+            if (delta <= 0) {
+                delta = 1;
+            } else if (delta > 0) {
+                delta = -1;
+            }
+			this.list.highlightNextItem(delta);
 		}
 
 		private function onMenuSelected(event: CustomEvent): void {
@@ -420,6 +480,33 @@ package {
 				this.list.x += this._offsetPoint.x;
 				this.list.y	+= this._offsetPoint.y;
 			}
+		}
+
+		/**
+		 * F4SE breaks name casing of object properties sent from papyrus.
+		 * Helper will try various name casing combinations to get the prop.
+		 */
+		private function getDataField(obj: Object, name: String): * {
+			if (!obj) {
+				return null;
+			}
+			// try first original name
+			if (obj[name] != null) {
+				return obj[name];
+			}
+			// lowercased
+			if (obj[name.toLowerCase()] != null) {
+				return obj[name.toLowerCase()];
+			}
+			// lowercased first letter
+			if (obj[name.charAt(0).toLowerCase() + name.slice(1)] != null) {
+				return obj[name.charAt().toLowerCase() + name.slice(1)];
+			}
+			// uppercased first letter
+			if (obj[name.charAt(0).toUpperCase() + name.slice(1)] != null) {
+				return obj[name.charAt().toUpperCase() + name.slice(1)];
+			}
+			return null;
 		}
 	}
 }

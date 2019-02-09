@@ -45,10 +45,12 @@ package {
             this._width = width;
             this._height = height;
             this.icon = icon;
+            this.x = pos.x;
+            this.y = pos.y;
             // render separator line
             this.graphics.lineStyle(1, 0xffffff, 0.4, true);
-            this.graphics.moveTo(this._pos.x, this._pos.y + this._height);
-            this.graphics.lineTo(this._pos.x + this._width, this._pos.y + this._height);
+            this.graphics.moveTo(0, 0 + this._height);
+            this.graphics.lineTo(0 + this._width, 0 + this._height);
 
             this.drawContent();
             this.addEventListener(MouseEvent.MOUSE_OVER, this.onMouseEnter);
@@ -60,7 +62,7 @@ package {
             if (this.containerHitArea) {
                 this.removeChild(this.containerHitArea);
             }
-            if (this.icon) {
+            if (this.icon && !initial) {
                 this.removeChild(this.icon);
             }
             if (this.equippedMarker) {
@@ -79,12 +81,11 @@ package {
 
             this.containerHitArea = new Sprite();
             this.containerHitArea.graphics.beginFill(0x000000, 0);
-            this.containerHitArea.graphics.drawRect(this._pos.x, this._pos.y, this._width, this._height);
+            this.containerHitArea.graphics.drawRect(0, 0, this._width, this._height);
             this.containerHitArea.graphics.endFill();
-            // this.containerSprite.alpha = 0.1;
             this._highlightedBox = new Sprite();
             this._highlightedBox.graphics.beginFill(0xffffff, 1);
-            this._highlightedBox.graphics.drawRect(this._pos.x, this._pos.y, this._width, this._height);
+            this._highlightedBox.graphics.drawRect(0, 0, this._width, this._height);
             this._highlightedBox.graphics.endFill();
             this._highlightedBox.alpha = 0;
 
@@ -99,7 +100,7 @@ package {
 
             var elementsHeight: Number = this._height - this.paddings * 2;
 
-            var nextElementX: Number = this._pos.x + this.paddings;
+            var nextElementX: Number = 0 + this.paddings;
 
             // left 10px at right side
             var availableWidth: Number = this._width - (this.paddings * 2) - 10;
@@ -110,7 +111,7 @@ package {
                 // square icon, so set width to height
                 this.icon.width = elementsHeight;
                 this.icon.x = nextElementX;
-                this.icon.y = this._pos.y + this.paddings;
+                this.icon.y = 0 + this.paddings;
                 this.icon.mouseEnabled = false;
                 this.icon.blendMode = BlendMode.NORMAL;
                 this.addChild(this.icon);
@@ -126,11 +127,11 @@ package {
             if (this._item.equipped) {
                 this.equippedMarker = new Shape();
                 this.equippedMarker.graphics.beginFill(0xffffff, 0.7);
-                this.equippedMarker.graphics.moveTo(nextElementX - 5, this._pos.y + elementsHeight / 2 - 5);
-                this.equippedMarker.graphics.lineTo(nextElementX, this._pos.y + elementsHeight / 2 + 5);
-                this.equippedMarker.graphics.lineTo(nextElementX + 5, this._pos.y + elementsHeight / 2 - 5);
-                this.equippedMarker.graphics.lineTo(nextElementX, this._pos.y + elementsHeight);
-                this.equippedMarker.graphics.lineTo(nextElementX - 5, this._pos.y + elementsHeight / 2 - 5);
+                this.equippedMarker.graphics.moveTo(nextElementX - 5, 0 + elementsHeight / 2 - 5);
+                this.equippedMarker.graphics.lineTo(nextElementX, 0 + elementsHeight / 2 + 5);
+                this.equippedMarker.graphics.lineTo(nextElementX + 5, 0 + elementsHeight / 2 - 5);
+                this.equippedMarker.graphics.lineTo(nextElementX, 0 + elementsHeight);
+                this.equippedMarker.graphics.lineTo(nextElementX - 5, 0 + elementsHeight / 2 - 5);
 
                 this.addChild(this.equippedMarker);
 
@@ -146,7 +147,7 @@ package {
             this.text.text = this._item.name;
             this.text.textColor = 0xffffff;
             this.text.x = nextElementX;
-            this.text.y = _pos.y + this.paddings;
+            this.text.y = 0 + this.paddings;
             this.text.height = elementsHeight;
             this.text.width = availableWidth - 30;
             this.text.mouseEnabled = false;
@@ -165,7 +166,7 @@ package {
             this.countText.text = String(this._item.count);
             this.countText.textColor = 0xffffff;
             this.countText.x = nextElementX;
-            this.countText.y = _pos.y + this.paddings;
+            this.countText.y = 0 + this.paddings;
             this.countText.height = elementsHeight;
             this.countText.width = 30;
             this.alignVertical(this.countText);
@@ -193,16 +194,22 @@ package {
                 if (this.icon) {
                     this.icon.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
                 }
-                this.equippedMarker.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
+                if (this.equippedMarker) {
+                    this.equippedMarker.transform.colorTransform = new ColorTransform(0, 0, 0, 1);
+                }
             } else if (!this._item.equipped) {
                 this._highlightedBox.alpha = 0;
                 this.text.textColor = 0xffffff;
                 this.countText.textColor = 0xffffff;
                 this._highlighted = false;
                 if (this.icon) {
-                    this.icon.transform.colorTransform = null;
+                    this.icon.transform.colorTransform = new ColorTransform();
+                    // this.icon.transform.colorTransform = null;
                 }
-                this.equippedMarker.transform.colorTransform = null;
+                if (this.equippedMarker) {
+                    // this.equippedMarker.transform.colorTransform = null;
+                    this.equippedMarker.transform.colorTransform = new ColorTransform();
+                }
             }
         }
 
@@ -215,16 +222,20 @@ package {
         }
 
         private function onClick(e: MouseEvent): void {
-            var ev: CustomEvent = new CustomEvent(ListItem.MOUSE_CLICK, { item: this.item });
+            var ev: CustomEvent = new CustomEvent(ListItem.MOUSE_CLICK, { item: this.item, listItem: this });
             this.dispatchEvent(ev);
         }
 
         private function onMouseEnter(e: MouseEvent): void {
-            this.highlighted = true;
+            // this.highlighted = true;
+            var ev: CustomEvent = new CustomEvent(ListItem.MOUSE_ENTER, { item: this.item, listItem: this });
+            this.dispatchEvent(ev);
         }
 
         private function onMouseLeave(e: MouseEvent): void {
-            this.highlighted = false;
+            // this.highlighted = false;
+            var ev: CustomEvent = new CustomEvent(ListItem.MOUSE_LEAVE, { item: this.item, listItem: this });
+            this.dispatchEvent(ev);
         }
 
         private function onEquippedChanged(): void {
