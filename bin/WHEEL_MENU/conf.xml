@@ -23,7 +23,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
 
 -->
 
-<wheelmenu>
+<wheelmenu innerRadius="60" outerRadius="100">
     <menu icon="b_aid_med" name="Aid" type="left">
         <pattern kind="tag" value="Aid" />
     </menu>

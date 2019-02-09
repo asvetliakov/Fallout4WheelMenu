@@ -24,7 +24,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
 
 -->
 
-<wheelmenu>
+<wheelmenu innerRadius="60" outerRadius="100">
     <menu icon="chem" name="Chems" type="left">
         <pattern kind="category" value="Chems" />
     </menu>

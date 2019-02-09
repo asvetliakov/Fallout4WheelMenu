@@ -28,11 +28,11 @@ package {
 		/**
 		 * Menu inner radius
 		 */
-		private const menuInnerRadius: uint = 60;
+		private var menuInnerRadius: uint = 60;
 		/**
 		 * Menu outer radius
 		 */
-		private const menuOuterRadius: uint = 100;
+		private var menuOuterRadius: uint = 100;
 		/**
 		 * Item list width
 		 */
@@ -205,6 +205,12 @@ package {
 		private function onConfLoaded(event: Event): void {
 			trace("WheelMenu: Configuration loaded");
 			this.conf = new XML(event.currentTarget.data);
+			if (this.conf.@innerRadius && this.conf.@innerRadius[0] && parseInt(this.conf.@innerRadius[0].toString())) {
+				this.menuInnerRadius = parseInt(this.conf.@innerRadius[0].toString(), 10);
+			}
+			if (this.conf.@outerRadius && this.conf.@outerRadius[0] && parseInt(this.conf.@outerRadius[0].toString())) {
+				this.menuOuterRadius = parseInt(this.conf.@outerRadius[0].toString(), 10);
+			}
 			for each (var menu: XML in this.conf.children()) {
 				var menuItem: Object = {
 					name: menu.@name[0].toString(),

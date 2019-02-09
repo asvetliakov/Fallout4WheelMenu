@@ -25,7 +25,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
 -->
 
 <!-- Note: this is same as for VIS-G but icon names are different -->
-<wheelmenu>
+<wheelmenu innerRadius="60" outerRadius="100">
     <menu icon="med" name="Aid" type="left">
         <pattern kind="tag" value="Aid" />
         <pattern kind="tag" value="Device" />

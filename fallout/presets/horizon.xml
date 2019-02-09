@@ -25,7 +25,7 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
 -->
 
 <!-- Note: this is same as for VIS-G but icon names are different -->
-<wheelmenu>
+<wheelmenu innerRadius="60" outerRadius="100">
     <!-- Left pane, various ingestibles, aid, non-combat tools, sorted by priority -->
 
     <!-- Aid, trauma kits, combat aid -->
