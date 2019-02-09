@@ -51,6 +51,7 @@ Item[] weaponInventoryItems
 Item[] weaponInventoryItems2
 Item[] ingestibleInventoryItems
 Item[] ingestibleInventoryItems2
+InputEnableLayer mLayer
 
 ; Return default sorting category for the form
 string Function GetItemCategory(Form item)
@@ -234,6 +235,28 @@ Function DispellSlowTime(Actor player)
     player.DispelSpell(SlowTimeSpellLight)
 EndFunction
 
+Function OpenMenu()
+    If (UI.IsMenuOpen(WheelMenuName))
+        Return
+    Endif
+    Actor player = Game.GetPlayer()
+    Debug.Trace("WheelMenu: SlowTimeMode: " + SlowTimeMode)
+    Debug.Trace("WheelMenu: SlowTimeMagnitude: " + SlowTimeMagnitude)
+    if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
+        ApplySlowTimeMode(SlowTimeMagnitude, player)
+    EndIf
+    mLayer.DisablePlayerControls(true, false, true, true, true, true, true, true, true, true, true)
+    UI.OpenMenu(WheelMenuName)
+EndFunction
+
+Function CloseMenu()
+    If (!UI.IsMenuOpen(WheelMenuName))
+        Return
+    EndIf
+    mLayer.EnablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
+    UI.CloseMenu(WheelMenuName)
+EndFunction
+
 Function ToggleMenu()
     Actor player = Game.GetPlayer()
     ; try to always dispell slow time mode, regardless of status
@@ -242,20 +265,23 @@ Function ToggleMenu()
         Return
     EndIf
     If (UI.IsMenuOpen(WheelMenuName))
-        UI.CloseMenu(WheelMenuName)
+        CloseMenu()
+        ; UI.CloseMenu(WheelMenuName)
     Else
         ; int MenuSlowTimeMode = MCM.GetModSettingInt("WheelMenu", "iSlowTimeMode:WheelMenu")
         ; int MenuSlowTimeMagn = MCM.GetModSettingInt("WheelMenu", "iSlowTimeMagnitude:WheelMenu")
-        Debug.Trace("WheelMenu: SlowTimeMode: " + SlowTimeMode)
-        Debug.Trace("WheelMenu: SlowTimeMagnitude: " + SlowTimeMagnitude)
-        if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
-            ApplySlowTimeMode(SlowTimeMagnitude, player)
-        EndIf
-        UI.OpenMenu(WheelMenuName)
+        OpenMenu()
+        ; Debug.Trace("WheelMenu: SlowTimeMode: " + SlowTimeMode)
+        ; Debug.Trace("WheelMenu: SlowTimeMagnitude: " + SlowTimeMagnitude)
+        ; if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
+        ;     ApplySlowTimeMode(SlowTimeMagnitude, player)
+        ; EndIf
+        ; UI.OpenMenu(WheelMenuName)
     EndIf
 EndFunction
 
 Function RegisterMenu()
+    mLayer = InputEnableLayer.Create()
     If (!UI.IsMenuRegistered(WheelMenuName))
         UI:MenuData data = new UI:MenuData
         ; data.MenuFlags = ShowCursor|EnableMenuControl = 12
@@ -363,7 +389,8 @@ Function onMenuSelect(int id, bool close)
         DispellSlowTime(player)
     Endif
     If (Ui.IsMenuOpen(WheelMenuName) && close)
-        UI.CloseMenu(WheelMenuName)
+        ; UI.CloseMenu(WheelMenuName)
+        CloseMenu();
     Endif
     If (item)
         Debug.Trace("WheelMenu: Equipping item: " + id)
