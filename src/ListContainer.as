@@ -4,6 +4,7 @@ package {
     import flash.display.MovieClip;
     import flash.geom.Rectangle;
     import flash.events.MouseEvent;
+    import flash.display.BlendMode;
 
     public class ListContainer extends Sprite {
         public static const ITEM_SELECTED: String = "List::ItemSelected";
@@ -26,6 +27,8 @@ package {
 
         private var _currentListItem: ListItem = null;
 
+        private var _itemsContainer: Sprite;
+
         public function ListContainer(
             category: String,
             type: String,
@@ -45,24 +48,26 @@ package {
 
             this.x = leftPos.x;
             this.y = leftPos.y;
+            this.cacheAsBitmap = true;
             this.graphics.moveTo(0, 0);
 
-            var listHitArea: Sprite = new Sprite();
-            listHitArea.graphics.moveTo(0, 0);
-            listHitArea.graphics.beginFill(0, 0);
-            listHitArea.graphics.drawRect(0, 0, width, height);
-            listHitArea.graphics.endFill();
-            listHitArea.mouseEnabled = false;
-            this.addChild(listHitArea);
+            this._itemsContainer = new Sprite();
+            this._itemsContainer.graphics.moveTo(0, 0);
+            this._itemsContainer.graphics.beginFill(0, 0);
+            this._itemsContainer.graphics.drawRect(0, 0, width, height);
+            this._itemsContainer.graphics.endFill();
+            this._itemsContainer.mouseEnabled = true;
+            this.addChild(this._itemsContainer);
 
             this.graphics.lineStyle(2, 0xffffff, 0.8, true);
             this.graphics.beginFill(0x202020, 0.75);
             this.graphics.drawRect(0, 0, width, height);
-            this.hitArea = listHitArea;
-            this.hitArea.addEventListener(MouseEvent.MOUSE_WHEEL, this.onMouseWheel);
+            this.graphics.endFill();
+            this.addEventListener(MouseEvent.MOUSE_WHEEL, this.onMouseWheel);
             this.mouseChildren = true;
 
-            this.hitArea.scrollRect = new Rectangle(0, 0, width, height + 1);
+            this._itemsContainer.scrollRect = new Rectangle(0, 0, width, height + 1);
+            // this.blendMode = BlendMode.NORMAL;
 
             this._scrollbar = new Scrollbar(height, (this.ITEM_SIZE) * items.length);
             this._scrollbar.x = width + 3;
@@ -81,7 +86,7 @@ package {
                 listItem.addEventListener(ListItem.MOUSE_ENTER, this.onItemEnter);
                 listItem.addEventListener(ListItem.MOUSE_LEAVE, this.onItemLeave);
                 this._listItems.push(listItem);
-                this.hitArea.addChild(listItem);
+                this._itemsContainer.addChild(listItem);
             }
         }
 
@@ -126,7 +131,7 @@ package {
         }
 
         private function get currentScrollOffset(): Number {
-            return this.hitArea.scrollRect.y;
+            return this._itemsContainer.scrollRect.y;
         }
 
         private function get maxScrollOffset(): Number {
@@ -164,19 +169,19 @@ package {
             // delta === 1 -> one item up
             // delta < 0 -> delta items down
             // delta > 1 -> delta items up
-            var rect: Rectangle = this.hitArea.scrollRect;
+            var rect: Rectangle = this._itemsContainer.scrollRect;
             if (delta <= 0 && this.currentScrollOffset < this.maxScrollOffset) {
                 rect.y += delta > 0 ? (delta * 15) : 15;
                 if (rect.y > this.maxScrollOffset) {
                     rect.y = maxScrollOffset;
                 }
-                this.hitArea.scrollRect = rect;
+                this._itemsContainer.scrollRect = rect;
             } else if (delta > 0 && this.currentScrollOffset > 0) {
                 rect.y -= (delta * 15);
                 if (rect.y < 0) {
                     rect.y = 0;
                 }
-                this.hitArea.scrollRect = rect;
+                this._itemsContainer.scrollRect = rect;
             }
             var scrolledPercents: Number = 100 * this.currentScrollOffset / this.maxScrollOffset;
             this._scrollbar.setScrollPercents(scrolledPercents);
@@ -187,13 +192,13 @@ package {
                 return;
             }
 
-            var rect: Rectangle = this.hitArea.scrollRect;
+            var rect: Rectangle = this._itemsContainer.scrollRect;
             if (this._currentListItem.y > (this._height - 2) + this.currentScrollOffset) {
                 rect.y += this.ITEM_SIZE;
-                this.hitArea.scrollRect = rect;
+                this._itemsContainer.scrollRect = rect;
             } else if (this._currentListItem.y < this.currentScrollOffset) {
                 rect.y -= this.ITEM_SIZE;
-                this.hitArea.scrollRect = rect;
+                this._itemsContainer.scrollRect = rect;
             }
             var scrolledPercents: Number = 100 * this.currentScrollOffset / this.maxScrollOffset;
             this._scrollbar.setScrollPercents(scrolledPercents);

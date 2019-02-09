@@ -145,9 +145,7 @@ package {
 						var inventoryNames: Array = this.getItemInventoryNames(item);
 						trace("WheelMenu: Item inventories: " + inventoryNames.join(", "));
 						for each (var name: String in inventoryNames) {
-							if (this.inventoryItemsMap[name].length < Main.MAX_ITEMS) {
-								this.inventoryItemsMap[name].push(item);
-							}
+							this.inventoryItemsMap[name].push(item);
 						}
 					} catch (err: Error) {
 						trace("WheelMenu: Error when procesing item, e: " + err.message);
