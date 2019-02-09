@@ -110,7 +110,12 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <!-- Craft -->
         <pattern kind="tag" value="Craft" />
         <!-- Tools devices (Sim settlements patch uses this tag for gavel, immersion breaker, etc...) -->
+        <!-- Also horizon workshop upgrades -->
         <pattern kind="tag" value="#" />
+        <!-- Novel manuscript/vault-tec training manual -->
+        <pattern kind="tag" value="#B" />
+        <!-- Notes which gives xp on read -->
+        <pattern kind="tag" value="#C" />
     </menu>
     <!-- Right pane -->
     <!-- Grenades -->
@@ -149,7 +154,9 @@ Ingestible -> All ingestibles what don't fall into previous categories (i.e. wit
         <pattern kind="tag" value="A" />
         <!-- Call dogs/animals -->
         <pattern kind="tag" value="^D" />
-        <!-- Deploy turret -->
+        <!-- Call animal companion -->
+        <pattern kind="tag" value="^A" />
+        <!-- Deploy turret/engineer device -->
         <pattern kind="tag" value="^T" />
         <!-- Stealth boys -->
         <pattern kind="tag" value="^S" />
