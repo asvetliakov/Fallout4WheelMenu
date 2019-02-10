@@ -308,14 +308,14 @@ package {
 			// s - 83
 			// e - 69
 			switch (event.keyCode) {
-				case 87: {
-					this.list.highlightNextItem(-1);
-					break;
-				}
-				case 83: {
-					this.list.highlightNextItem(1);
-					break;
-				}
+				// case 87: {
+				// 	this.list.highlightNextItem(-1);
+				// 	break;
+				// }
+				// case 83: {
+				// 	this.list.highlightNextItem(1);
+				// 	break;
+				// }
 				case 69: {
 					this.list.selectCurrentItem();
 					break;

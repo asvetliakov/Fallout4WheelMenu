@@ -245,7 +245,7 @@ Function OpenMenu()
     if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
         ApplySlowTimeMode(SlowTimeMagnitude, player)
     EndIf
-    mLayer.DisablePlayerControls(true, false, true, true, true, true, true, true, true, true, true)
+    mLayer.DisablePlayerControls(false, false, true, true, false, true, true, true, true, true, false)
     UI.OpenMenu(WheelMenuName)
 EndFunction
 
@@ -388,14 +388,14 @@ Function onMenuSelect(int id, bool close)
     If (close)
         DispellSlowTime(player)
     Endif
-    If (Ui.IsMenuOpen(WheelMenuName) && close)
-        ; UI.CloseMenu(WheelMenuName)
-        CloseMenu();
-    Endif
     If (item)
         Debug.Trace("WheelMenu: Equipping item: " + id)
         player.EquipItem(item, false, true)
     EndIf
+    If (Ui.IsMenuOpen(WheelMenuName) && close)
+        ; UI.CloseMenu(WheelMenuName)
+        CloseMenu();
+    Endif
 EndFunction
 
 
