@@ -4,11 +4,16 @@ package {
     import flash.display.MovieClip;
 
     public class MenuItem extends Sprite {
+        public var startDeg: Number;
+        public var endDeg: Number;
+        public var centerDeg: Number;
+
         private var lineObj: Sprite;
         private var icon: MovieClip;
         private var _active: Boolean;
         private var centerX: Number;
         private var centerY: Number;
+
 
         public var type: String;
 
@@ -20,6 +25,8 @@ package {
             this.lineObj = new Sprite();
             this.lineObj.graphics.clear();
             this.lineObj.graphics.lineStyle(3, 0xffffff, 1, true);
+            this.startDeg = startDeg;
+            this.endDeg = endDeg;
 
             var innerLeftX: Number = innerRadius * Math.cos(startDeg * Math.PI / 180);
             var innerLeftY: Number = innerRadius * Math.sin(startDeg * Math.PI / 180);
@@ -32,12 +39,14 @@ package {
             var outerRightY: Number = outerRadius * Math.sin(endDeg * Math.PI / 180);
 
             // var centerDeg: Number = startDeg +  (angle / 2);
-            var centerDeg: Number = type === "left" ? startDeg - (angle / 2) : startDeg + (angle / 2);
+            // var centerDeg: Number = type === "left" ? startDeg - (angle / 2) : startDeg + (angle / 2);
+            var centerDeg: Number = startDeg + (angle / 2);
             if (centerDeg > 360) {
                 centerDeg = centerDeg - 360;
             }
-            centerX = (innerRadius + ((outerRadius - innerRadius) / 2)) * Math.cos(centerDeg * Math.PI / 180);
-            centerY = (innerRadius + ((outerRadius - innerRadius) / 2)) * Math.sin(centerDeg * Math.PI / 180);
+            this.centerDeg = centerDeg;
+            this.centerX = (innerRadius + ((outerRadius - innerRadius) / 2)) * Math.cos(centerDeg * Math.PI / 180);
+            this.centerY = (innerRadius + ((outerRadius - innerRadius) / 2)) * Math.sin(centerDeg * Math.PI / 180);
 
             this.lineObj.graphics.moveTo(innerLeftX, innerLeftY);
             this.lineObj.graphics.lineTo(outerLeftX, outerLeftY);

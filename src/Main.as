@@ -19,6 +19,7 @@ package {
     [SWF(width="1920", height="1080", backgroundColor="#393939", frameRate="24")]
 	public class Main extends MovieClip implements ICodeObject {
 		public static const SELECT_EVENT_NAME: String = "WheelMenuSelect";
+		public static const CLOSE_EVENT_NAME: String = "WheelMenuClose";
 		public static const INIT_EVENT_NAME: String = "WheelMenuInit";
 		public static const MAX_ITEMS: uint = 16;
 
@@ -88,9 +89,12 @@ package {
 		 */
 		private var _scaling: Number = 1;
 
+		// private var _gameInput: GameInput;
+
 		public function Main() {
 			trace("WheelMenu: Constructor");
 			this._offsetPoint = new Point(0, 0);
+			// this._gameInput = new GameInput();
 
 			// Note: need to set them early
 			this.scaleX = this._scaling;
@@ -108,6 +112,7 @@ package {
 			confLoader.load(new URLRequest("./WHEEL_MENU/conf.xml"));
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
 			this.stage.addEventListener(MouseEvent.MOUSE_WHEEL, this.onWheel);
+			// this._gameInput.addEventListener(GameInputEvent.DEVICE_ADDED, this.onControlledAdded);
 		}
 
 		public function get inventoryItems(): Array {
@@ -300,24 +305,51 @@ package {
 		}
 
 		private function onKeyDown(event: KeyboardEvent): void {
-			if (!this.list) {
-				return;
-			}
-
+			// trace(event.keyCode);
 			// w - 87
 			// s - 83
 			// e - 69
+			// 13 - enter
+			// 37 - key left
+			// 38 - key up
+			// 39 - key right
+			// 40 - key down
+			// 27 - esc
+
+			// if (!this.list) {
+			// 	return;
+			// }
+
 			switch (event.keyCode) {
-				// case 87: {
-				// 	this.list.highlightNextItem(-1);
-				// 	break;
-				// }
-				// case 83: {
-				// 	this.list.highlightNextItem(1);
-				// 	break;
-				// }
+				case 27: {
+					this.closeMenu();
+					break;
+				}
+				case 37: {
+					this.menuContainer.selectMenuItem(-1);
+					break;
+				}
+				case 39: {
+					this.menuContainer.selectMenuItem(1);
+					break;
+				}
+				case 38: {
+					if (this.list) {
+						this.list.highlightNextItem(-1);
+					}
+					break;
+				}
+				case 40: {
+					if (this.list) {
+						this.list.highlightNextItem(1);
+					}
+					break;
+				}
+				case 13:
 				case 69: {
-					this.list.selectCurrentItem();
+					if (this.list) {
+						this.list.selectCurrentItem();
+					}
 					break;
 				}
 			}
@@ -393,6 +425,16 @@ package {
 						this.filterItemFromInventories(item);
 					}
 					this.redrawCurrentList();
+				}
+			}
+		}
+
+		private function closeMenu(): void {
+			if (this.f4seCodeObj) {
+				try {
+					this.f4seCodeObj.SendExternalEvent(Main.CLOSE_EVENT_NAME);
+				} catch (error: Error) {
+					trace("WheelMenu: Unable to send f4se external event: " + error.message);
 				}
 			}
 		}

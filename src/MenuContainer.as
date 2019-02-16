@@ -7,11 +7,11 @@ package {
 
     public class MenuContainer extends Sprite {
         public static const ITEM_SELECTED: String = "Menu::ItemSelected";
-        private const rightDegStart: uint = 290;
+        private const rightDegStart: uint = 270;
         private const rightDegEnd: uint = 90;
-        private const leftDegStart: uint = 250;
-        private const leftDegEnd: uint = 90;
-        private const totalDegsPerSection: uint = 160;
+        private const leftDegStart: uint = 90;
+        private const leftDegEnd: uint = 270;
+        private const totalDegsPerSection: uint = 180;
 
         /**
          * Menu inner circle radius
@@ -38,7 +38,7 @@ package {
          */
         private var pointer: Shape;
         /**
-         * Current highlighted item
+         * Current highlighted item. Nullable
          */
         private var highlightedItem: MenuItem;
         /**
@@ -48,7 +48,7 @@ package {
         /**
          * Top menu item refernece (the one without submenu)
          */
-        private var topMenuItem: MenuItem;
+        // private var topMenuItem: MenuItem;
 
         public function MenuContainer(centerPos: Point, innerRad: uint, outerRad: uint, iconManager: IconManager, items: Array) {
             this.innerRadius = innerRad;
@@ -75,9 +75,10 @@ package {
             this.addChild(circ);
 
             // add stub menu item at the top
-            topMenuItem = new MenuItem(null, "left", this.innerRadius, this.outerRadius, this.leftDegStart, this.rightDegStart, 20, null, true);
-            this.addChild(topMenuItem);
-            this.highlightedItem = topMenuItem;
+            // topMenuItem = new MenuItem(null, "left", this.innerRadius, this.outerRadius, this.leftDegEnd, this.rightDegStart, this.rightDegStart - this.leftDegEnd, null, true);
+            // this.addChild(topMenuItem);
+            // this.highlightedItem = topMenuItem;
+            this.highlightedItem = null;
 
             var leftItems: Array = items.filter(function (item: Object, index: int, array: Array): Boolean {
                 return item.type === "left";
@@ -89,20 +90,6 @@ package {
             var leftItemsDeg: Number = this.totalDegsPerSection / leftItems.length;
             var rightItemsDeg: Number = this.totalDegsPerSection / rightItems.length;
 
-            for (var il: int = 0; il < leftItems.length; il++) {
-                var itemL: Object = leftItems[il];
-                var startL: Number = leftDegStart - (il * leftItemsDeg);
-                var endL: Number = leftDegStart - leftItemsDeg - (il * leftItemsDeg);
-                var menuDefItemL: Object = {
-                    name: itemL.name,
-                    startDeg: endL, //counterclockwise
-                    endDeg: startL, //counterclockwise
-                    type: "left",
-                    menuObj: new MenuItem(itemL.name, "left", this.innerRadius, this.outerRadius, startL, endL, leftItemsDeg, iconManager.getIconInstance(itemL.icon))
-                };
-                this.items.push(menuDefItemL);
-                this.addChild(menuDefItemL.menuObj);
-            }
             for (var ir: int = 0; ir < rightItems.length; ir++) {
                 var itemR: Object = rightItems[ir];
                 var startR: Number = rightDegStart + (ir * rightItemsDeg);
@@ -123,6 +110,24 @@ package {
                 this.items.push(menuDefItemR);
                 this.addChild(menuDefItemR.menuObj);
             }
+            // need to reverse so first defined items will be at top (end of deg)
+            var reversedLeftItems: Array = leftItems.reverse();
+            for (var il: int = 0; il < reversedLeftItems.length; il++) {
+                var itemL: Object = reversedLeftItems[il];
+                // var startL: Number = leftDegStart - (il * leftItemsDeg);
+                // var endL: Number = leftDegStart - leftItemsDeg - (il * leftItemsDeg);
+                var startL: Number = leftDegStart + (il * leftItemsDeg);
+                var endL: Number = leftDegStart + leftItemsDeg + (il * leftItemsDeg);
+                var menuDefItemL: Object = {
+                    name: itemL.name,
+                    startDeg: startL,
+                    endDeg: endL,
+                    type: "left",
+                    menuObj: new MenuItem(itemL.name, "left", this.innerRadius, this.outerRadius, startL, endL, leftItemsDeg, iconManager.getIconInstance(itemL.icon))
+                };
+                this.items.push(menuDefItemL);
+                this.addChild(menuDefItemL.menuObj);
+            }
             this.mouseEnabled = true;
             this.mouseChildren = false;
             this.addEventListener(MouseEvent.MOUSE_MOVE, this.onMouseMove);
@@ -136,6 +141,29 @@ package {
             this.pointer.graphics.lineTo(10, 5);
             this.pointer.graphics.lineTo(-10, 5);
             this.addChild(this.pointer);
+        }
+
+        public function selectMenuItem(delta: int): void {
+            var prevPinnedItem: MenuItem = this.pinnedItem;
+            // delta < 0 - counterclock (left)
+            // delta > 0 - clockwise (right)
+            var currentStartDeg: Number = this.highlightedItem ? this.highlightedItem.startDeg : this.leftDegEnd;
+            var currentEndDeg: Number = this.highlightedItem ? this.highlightedItem.endDeg : this.rightDegStart;
+
+            var nextDeg: Number = delta < 0 ? currentStartDeg - 1 : currentEndDeg + 1;
+            if (nextDeg > 360) {
+                nextDeg = nextDeg - 360;
+            } else if (nextDeg < 0) {
+                nextDeg = Math.abs(nextDeg);
+            }
+            this.updateActiveItemFromDeg(nextDeg, false);
+            // rotate pointer only when not pinned something, otherise it's confusing
+            if (!prevPinnedItem || !this.pinnedItem || (this.pinnedItem !== prevPinnedItem)) {
+                var centerDeg: Number = this.highlightedItem ? this.highlightedItem.centerDeg : 0;
+                // menu degs are shifted by 90deg clockwise
+                centerDeg = centerDeg < 90 ? 90 + centerDeg : centerDeg - 270;
+                this.pointer.rotationZ = centerDeg;
+            }
         }
 
         private function getDegFromMouseEvent(ev: MouseEvent): Number {
@@ -166,7 +194,7 @@ package {
         }
 
         private function onMouseClick(ev: MouseEvent): void {
-            if (!this.highlightedItem || this.highlightedItem === this.topMenuItem) {
+            if (!this.highlightedItem) {
                 return;
             }
             // unpin on second click
@@ -206,7 +234,14 @@ package {
             var prevPinnedItem: MenuItem = this.pinnedItem;
             // var degs: Number = radiants * 180 / Math.PI
             var degs: Number = this.getDegFromMouseEvent(ev);
-            this.updateActiveItemFromMouseDeg(ev.localX >= 0 ? degs : 360 - degs, ev.localX < 0);
+            // menu items degs are shifted by 90 clockwise
+            var menuDegs: Number = degs;
+            if (ev.localX < 0) {
+                menuDegs = 360 - degs;
+            }
+            menuDegs = menuDegs <  90 ? 270 + menuDegs : menuDegs - 90;
+            // this.updateActiveItemFromDeg(ev.localX >= 0 ? menuDegs : 360 - menuDegs, ev.localX < 0);
+            this.updateActiveItemFromDeg(menuDegs, ev.localX < 0);
             // rotate pointer only when not pinned something, otherise it's confusing
             if (!prevPinnedItem || !this.pinnedItem || (this.pinnedItem !== prevPinnedItem)) {
                 if (ev.localX >= 0) {
@@ -217,19 +252,17 @@ package {
             }
         }
 
-        private function updateActiveItemFromMouseDeg(degs: Number, left: Boolean = false): void {
-            // menu items degs are shifted by 90 clockwise
-            var menuDegs: Number = degs <  90 ? 270 + degs : degs - 90;
+        private function updateActiveItemFromDeg(degs: Number, left: Boolean = false): void {
             var foundItem: Object;
             for (var i: int = 0; i < this.items.length; i++) {
                 var item: Object = this.items[i];
-                if (item.startDeg <= menuDegs && item.endDeg > menuDegs) {
+                if (item.startDeg <= degs && item.endDeg > degs) {
                     foundItem = item;
                     break;
                 }
             }
             // use degree-border item if in right pane, and not at the top
-            if (!foundItem && !left && (menuDegs >= this.rightDegStart || menuDegs <= this.rightDegEnd)) {
+            if (!foundItem && !left && (degs >= this.rightDegStart || degs <= this.rightDegEnd)) {
                 var filtered: Array = this.items.filter(function (item: Object, index: int, arr: Array): Boolean {
                     return item.type === "right" && item.startDeg > item.endDeg;
                 });
@@ -246,11 +279,11 @@ package {
                     var e1: Event = new CustomEvent(MenuContainer.ITEM_SELECTED, { name: this.highlightedItem.itemName, type: this.highlightedItem.type });
                     this.dispatchEvent(e1);
                 }
-            } else if (!foundItem && this.highlightedItem !== this.topMenuItem) {
+            } else if (!foundItem) {
                 if (this.highlightedItem && this.highlightedItem !== this.pinnedItem) {
                     this.highlightedItem.active = false;
                 }
-                this.highlightedItem = this.topMenuItem;
+                this.highlightedItem = null;
                 this.highlightedItem.active = true;
                 if (!this.pinnedItem) {
                     var e2: Event = new CustomEvent(MenuContainer.ITEM_SELECTED, { name: null, type: null });
