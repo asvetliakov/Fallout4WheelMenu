@@ -287,6 +287,7 @@ Function RegisterMenu()
         ; data.MenuFlags = ShowCursor|EnableMenuControl = 12
         ; data.MenuFlags = ShowCursor|DoNotPreventGameSave|EnableMenuControl = 2060
         data.MenuFlags = 12
+        ; data.ExtendedFlags = 0x01
         UI.RegisterCustomMenu(WheelMenuName, "WheelMenu", "root1", data)
     EndIf
 EndFunction
@@ -300,6 +301,8 @@ Function RegisterForCustomEvents(Actor player)
     ; RegisterForKey(71); g
     RegisterForExternalEvent("WheelMenuInit", "onMenuInit")
     RegisterForExternalEvent("WheelMenuSelect", "onMenuSelect")
+    RegisterForExternalEvent("WheelMenuClose", "OnMenuClose")
+    RegisterForControl("QuickkeyDown")
 EndFunction
 
 Event OnQuestInit()
@@ -336,6 +339,12 @@ EndEvent
 ;         ToggleMenu()
 ;     Endif
 ; EndEvent
+
+Event OnControlDown(string asControlName)
+    If (asControlName == "QuickkeyDown")
+        ToggleMenu()
+    Endif
+EndEvent
 
 
 ;; Wheel menu is ready
@@ -396,6 +405,12 @@ Function onMenuSelect(int id, bool close)
         ; UI.CloseMenu(WheelMenuName)
         CloseMenu();
     Endif
+EndFunction
+
+Function OnMenuClose()
+    Actor player = Game.GetPlayer()
+    DispellSlowTime(player)
+    CloseMenu();
 EndFunction
 
 
