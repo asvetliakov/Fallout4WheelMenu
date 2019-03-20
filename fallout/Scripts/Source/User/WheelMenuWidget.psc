@@ -22,6 +22,7 @@ int Property SlowTimeMagnitude = 0 Auto
 int Property MenuOffsetX = 0 Auto
 int Property MenuOffsetY = 0 Auto
 float Property MenuScaling = 1.0 Auto
+bool Property GamepadControlEnabled = true Auto
 
 String WheelMenuName = "F4WheelMenu" const
 
@@ -236,10 +237,24 @@ Function DispellSlowTime(Actor player)
 EndFunction
 
 Function OpenMenu()
-    If (UI.IsMenuOpen(WheelMenuName))
+    If (UI.IsMenuOpen(WheelMenuName) || Utility.IsInMenuMode())
+    ; If (UI.IsMenuOpen(WheelMenuName))
         Return
     Endif
     Actor player = Game.GetPlayer()
+    ; Bail while in dialogue
+    Actor dTarget = player.GetDialogueTarget()
+    ; Simple GetDialogueTarget() is not enough, since it's not cleaned up
+    ; after the dialogue
+    ; IsInDialogueWithPlayer checks only for full-featured (with answers) dialogues, skips for simple
+    ; conversations
+    If (dTarget && dTarget.IsInDialogueWithPlayer())
+        Return
+    Endif
+    ; bail if health is 0 or less
+    If (player.GetValue(Game.GetHealthAV()) <= 0)
+        Return
+    Endif
     Debug.Trace("WheelMenu: SlowTimeMode: " + SlowTimeMode)
     Debug.Trace("WheelMenu: SlowTimeMagnitude: " + SlowTimeMagnitude)
     if (SlowTimeMode == 0 || (SlowTimeMode == 1 && player.IsInCombat()))
@@ -296,13 +311,18 @@ Function RegisterForCustomEvents(Actor player)
     ; RegisterForRemoteEvent(player, "onItemEquipped")
     RegisterForRemoteEvent(player, "onItemAdded")
     RegisterForRemoteEvent(player, "onItemRemoved")
+    RegisterForRemoteEvent(player, "onDeath")
     ; Todo: investigate possibility of applying only to specific keywords only
     AddInventoryEventFilter(none)
     ; RegisterForKey(71); g
     RegisterForExternalEvent("WheelMenuInit", "onMenuInit")
     RegisterForExternalEvent("WheelMenuSelect", "onMenuSelect")
     RegisterForExternalEvent("WheelMenuClose", "OnMenuClose")
-    RegisterForControl("QuickkeyDown")
+    if (GamepadControlEnabled)
+        RegisterForControl("QuickkeyDown")
+    Else
+        UnregisterForControl("QuickkeyDown")
+    EndIf
 EndFunction
 
 Event OnQuestInit()
@@ -332,6 +352,11 @@ Event ObjectReference.OnItemRemoved(ObjectReference akSender, Form akBaseItem, i
         Return
     EndIf
     RemoveItem(akBaseItem, aiItemCount)
+EndEvent
+
+; Note: doesn't work with alternative death mods
+Event Actor.OnDeath(Actor akSender, Actor akKiller)
+    OnMenuClose()
 EndEvent
 
 ; Event OnKeyDown(int aiKeyCode)

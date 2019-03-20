@@ -81,6 +81,20 @@
               "sourceForm": "WheelMenu.esp|F99",
               "propertyName": "MenuScaling"
           }
+      },
+      {
+          "type": "section",
+          "text": "Gamepad"
+      },
+      {
+          "type": "switcher",
+          "text": "Bind menu to D-Pad down",
+          "help": "Enables menu binding for gamepads (D-Pad down). Requires save or game reload to take the effect",
+          "valueOptions": {
+              "sourceType": "PropertyValueBool",
+              "sourceForm": "WheelMenu.esp|F99",
+              "propertyName": "GamepadControlEnabled"
+          }
       }
   ]
 }
